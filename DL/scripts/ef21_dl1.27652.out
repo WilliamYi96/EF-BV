@@ -1,0 +1,316 @@
+******************************************************************
+Is CUDA avilable: True
+GPU devices:  4
+Torch hub(cache) for loaded datasets:  /home/yik/.cache/torch/hub
+******************************************************************
+
+PyTorch version: 1.9.1+cu111
+Is debug build: False
+CUDA used to build PyTorch: 11.1
+ROCM used to build PyTorch: N/A
+
+OS: CentOS Linux release 7.9.2009 (Core) (x86_64)
+GCC version: (GCC) 4.8.5 20150623 (Red Hat 4.8.5-44)
+Clang version: Could not collect
+CMake version: Could not collect
+Libc version: glibc-2.17
+
+Python version: 3.8 (64-bit runtime)
+Python platform: Linux-3.10.0-1160.24.1.el7.x86_64-x86_64-with-glibc2.17
+Is CUDA available: True
+CUDA runtime version: Could not collect
+GPU models and configuration: 
+GPU 0: NVIDIA A100-SXM-80GB
+GPU 1: NVIDIA A100-SXM-80GB
+GPU 2: NVIDIA A100-SXM-80GB
+GPU 3: NVIDIA A100-SXM-80GB
+
+Nvidia driver version: 465.19.01
+cuDNN version: Could not collect
+HIP runtime version: N/A
+MIOpen runtime version: N/A
+
+Versions of relevant libraries:
+[pip3] numpy==1.21.5
+[pip3] torch==1.9.1+cu111
+[pip3] torchaudio==0.9.1
+[pip3] torchvision==0.10.1+cu111
+[conda] numpy                     1.21.5                   pypi_0    pypi
+[conda] torch                     1.9.1+cu111              pypi_0    pypi
+[conda] torchaudio                0.9.1                    pypi_0    pypi
+[conda] torchvision               0.10.1+cu111             pypi_0    pypi
+******************************************************************
+******************************************************************
+******************************************************************
+Files already downloaded and verified
+Files already downloaded and verified
+Total train set size for 'CIFAR10' is  50000
+  Train set(shard) size for worker 0:  10240
+  Train set(shard) size for worker 0 in batches (with batch_size=2048):  5
+  Train set(shard) size for worker 1:  10240
+  Train set(shard) size for worker 1 in batches (with batch_size=2048):  5
+  Train set(shard) size for worker 2:  10240
+  Train set(shard) size for worker 2 in batches (with batch_size=2048):  5
+  Train set(shard) size for worker 3:  10240
+  Train set(shard) size for worker 3 in batches (with batch_size=2048):  5
+  Train set(shard) size for worker 4:  9040
+  Train set(shard) size for worker 4 in batches (with batch_size=2048):  5
+Start training vgg11@CIFAR10 for K=4545 iteration. EF21 [device(type='cuda', index=1)]
+number_of_classes_in_dataset:  10
+number of output class in original model:  1000
+Summary about layers inside vgg11
+=============================================================
+torch.nn.modules.container.Sequential       occured 02 times
+torch.nn.modules.conv.Conv2d                occured 08 times
+torch.nn.modules.activation.ReLU            occured 10 times
+torch.nn.modules.pooling.MaxPool2d          occured 05 times
+torch.nn.modules.pooling.AdaptiveAvgPool2d  occured 01 times
+torch.nn.modules.linear.Linear              occured 03 times
+torch.nn.modules.dropout.Dropout            occured 02 times
+=============================================================
+Total number of parameters inside 'vgg11' is 132,863,336
+=============================================================
+number_of_classes_in_dataset:  10
+number of output class in original model:  1000
+number_of_classes_in_dataset:  10
+number of output class in original model:  1000
+number_of_classes_in_dataset:  10
+number of output class in original model:  1000
+number_of_classes_in_dataset:  10
+number of output class in original model:  1000
+number_of_classes_in_dataset:  10
+number of output class in original model:  1000
+Worker 0/5: START WORKER. IT USES DEVICE cuda:1 , AND LOCAL TRAINSET SIZE IN SAMPLES IS:  10240
+Worker 1/5: START WORKER. IT USES DEVICE cuda:1 , AND LOCAL TRAINSET SIZE IN SAMPLES IS:  10240
+Worker 2/5: START WORKER. IT USES DEVICE cuda:1 , AND LOCAL TRAINSET SIZE IN SAMPLES IS:  10240
+Worker 3/5: START WORKER. IT USES DEVICE cuda:1 , AND LOCAL TRAINSET SIZE IN SAMPLES IS:  10240
+Worker 4/5: START WORKER. IT USES DEVICE cuda:1 , AND LOCAL TRAINSET SIZE IN SAMPLES IS:  9040
+Master:  Start 4545 iterations of algorithm
+Master:  Iteration 0/4545. Completed by  0.0 %
+  train accuracy: 0.00184, test accuracy: 0.0019, train loss: 14.348750114440918, test loss: 14.401182174682617
+  grad norm train: 7790.58056640625, test: 7928.322265625
+  used step-size: 0.008
+Master:  Iteration 1/4545. Completed by  0.022002200220022 %
+Master:  Iteration 2/4545. Completed by  0.044004400440044 %
+Master:  Iteration 3/4545. Completed by  0.066006600660066 %
+Master:  Iteration 4/4545. Completed by  0.088008800880088 %
+Master:  Iteration 5/4545. Completed by  0.11001100110011 %
+Master:  Iteration 6/4545. Completed by  0.132013201320132 %
+Master:  Iteration 7/4545. Completed by  0.15401540154015403 %
+Master:  Iteration 8/4545. Completed by  0.176017601760176 %
+Master:  Iteration 9/4545. Completed by  0.19801980198019803 %
+Master:  Iteration 10/4545. Completed by  0.22002200220022 %
+  train accuracy: 0.16908, test accuracy: 0.1657, train loss: 2.931980609893799, test loss: 2.932695150375366
+  grad norm train: 363.3308410644531, test: 368.54364013671875
+  used step-size: 0.008
+Master:  Iteration 11/4545. Completed by  0.24202420242024203 %
+Master:  Iteration 12/4545. Completed by  0.264026402640264 %
+Master:  Iteration 13/4545. Completed by  0.28602860286028603 %
+Master:  Iteration 14/4545. Completed by  0.30803080308030806 %
+Master:  Iteration 15/4545. Completed by  0.33003300330033003 %
+Master:  Iteration 16/4545. Completed by  0.352035203520352 %
+Master:  Iteration 17/4545. Completed by  0.37403740374037403 %
+Master:  Iteration 18/4545. Completed by  0.39603960396039606 %
+Master:  Iteration 19/4545. Completed by  0.4180418041804181 %
+Master:  Iteration 20/4545. Completed by  0.44004400440044 %
+  train accuracy: 0.37578, test accuracy: 0.3701, train loss: 1.8049194812774658, test loss: 1.8081721067428589
+  grad norm train: 5.656922817230225, test: 5.876074314117432
+  used step-size: 0.008
+Master:  Iteration 21/4545. Completed by  0.46204620462046203 %
+Master:  Iteration 22/4545. Completed by  0.48404840484048406 %
+Master:  Iteration 23/4545. Completed by  0.506050605060506 %
+Master:  Iteration 24/4545. Completed by  0.528052805280528 %
+Master:  Iteration 25/4545. Completed by  0.5500550055005501 %
+Master:  Iteration 26/4545. Completed by  0.5720572057205721 %
+Master:  Iteration 27/4545. Completed by  0.594059405940594 %
+Master:  Iteration 28/4545. Completed by  0.6160616061606161 %
+Master:  Iteration 29/4545. Completed by  0.6380638063806381 %
+Master:  Iteration 30/4545. Completed by  0.6600660066006601 %
+  train accuracy: 0.47502, test accuracy: 0.4727, train loss: 1.4803069829940796, test loss: 1.4832191467285156
+  grad norm train: 5.286991119384766, test: 5.90602970123291
+  used step-size: 0.008
+Master:  Iteration 31/4545. Completed by  0.6820682068206821 %
+Master:  Iteration 32/4545. Completed by  0.704070407040704 %
+Master:  Iteration 33/4545. Completed by  0.7260726072607261 %
+Master:  Iteration 34/4545. Completed by  0.7480748074807481 %
+Master:  Iteration 35/4545. Completed by  0.77007700770077 %
+Master:  Iteration 36/4545. Completed by  0.7920792079207921 %
+Master:  Iteration 37/4545. Completed by  0.8140814081408141 %
+Master:  Iteration 38/4545. Completed by  0.8360836083608362 %
+Master:  Iteration 39/4545. Completed by  0.8580858085808581 %
+Master:  Iteration 40/4545. Completed by  0.88008800880088 %
+  train accuracy: 0.4844, test accuracy: 0.481, train loss: 1.46609365940094, test loss: 1.4793016910552979
+  grad norm train: 126.53137969970703, test: 125.29208374023438
+  used step-size: 0.008
+Master:  Iteration 41/4545. Completed by  0.9020902090209022 %
+Master:  Iteration 42/4545. Completed by  0.9240924092409241 %
+Master:  Iteration 43/4545. Completed by  0.946094609460946 %
+Master:  Iteration 44/4545. Completed by  0.9680968096809681 %
+Master:  Iteration 45/4545. Completed by  0.9900990099009901 %
+Master:  Iteration 46/4545. Completed by  1.012101210121012 %
+Master:  Iteration 47/4545. Completed by  1.0341034103410343 %
+Master:  Iteration 48/4545. Completed by  1.056105610561056 %
+Master:  Iteration 49/4545. Completed by  1.078107810781078 %
+Master:  Iteration 50/4545. Completed by  1.1001100110011002 %
+  train accuracy: 0.60036, test accuracy: 0.595, train loss: 1.1388336420059204, test loss: 1.1541908979415894
+  grad norm train: 2.015108108520508, test: 1.88552987575531
+  used step-size: 0.008
+Master:  Iteration 51/4545. Completed by  1.1221122112211221 %
+Master:  Iteration 52/4545. Completed by  1.1441144114411441 %
+Master:  Iteration 53/4545. Completed by  1.166116611661166 %
+Master:  Iteration 54/4545. Completed by  1.188118811881188 %
+Master:  Iteration 55/4545. Completed by  1.21012101210121 %
+Master:  Iteration 56/4545. Completed by  1.2321232123212322 %
+Master:  Iteration 57/4545. Completed by  1.2541254125412542 %
+Master:  Iteration 58/4545. Completed by  1.2761276127612762 %
+Master:  Iteration 59/4545. Completed by  1.2981298129812981 %
+Master:  Iteration 60/4545. Completed by  1.3201320132013201 %
+  train accuracy: 0.65276, test accuracy: 0.642, train loss: 0.9997380375862122, test loss: 1.023442268371582
+  grad norm train: 2.701765775680542, test: 2.268040895462036
+  used step-size: 0.008
+Master:  Iteration 61/4545. Completed by  1.342134213421342 %
+Master:  Iteration 62/4545. Completed by  1.3641364136413643 %
+Master:  Iteration 63/4545. Completed by  1.3861386138613863 %
+Master:  Iteration 64/4545. Completed by  1.408140814081408 %
+Master:  Iteration 65/4545. Completed by  1.4301430143014302 %
+Master:  Iteration 66/4545. Completed by  1.4521452145214522 %
+Master:  Iteration 67/4545. Completed by  1.4741474147414741 %
+Master:  Iteration 68/4545. Completed by  1.4961496149614961 %
+Master:  Iteration 69/4545. Completed by  1.518151815181518 %
+Master:  Iteration 70/4545. Completed by  1.54015401540154 %
+  train accuracy: 0.69086, test accuracy: 0.6778, train loss: 0.8917766809463501, test loss: 0.9259229302406311
+  grad norm train: 1.5533456802368164, test: 1.3870551586151123
+  used step-size: 0.008
+Master:  Iteration 71/4545. Completed by  1.5621562156215623 %
+Master:  Iteration 72/4545. Completed by  1.5841584158415842 %
+Master:  Iteration 73/4545. Completed by  1.6061606160616062 %
+Master:  Iteration 74/4545. Completed by  1.6281628162816282 %
+Master:  Iteration 75/4545. Completed by  1.65016501650165 %
+Master:  Iteration 76/4545. Completed by  1.6721672167216723 %
+Master:  Iteration 77/4545. Completed by  1.6941694169416943 %
+Master:  Iteration 78/4545. Completed by  1.7161716171617163 %
+Master:  Iteration 79/4545. Completed by  1.738173817381738 %
+Master:  Iteration 80/4545. Completed by  1.76017601760176 %
+  train accuracy: 0.7195, test accuracy: 0.7035, train loss: 0.8116540312767029, test loss: 0.8590049147605896
+  grad norm train: 2.2458977699279785, test: 3.794273853302002
+  used step-size: 0.008
+Master:  Iteration 81/4545. Completed by  1.782178217821782 %
+Master:  Iteration 82/4545. Completed by  1.8041804180418044 %
+Master:  Iteration 83/4545. Completed by  1.8261826182618264 %
+Master:  Iteration 84/4545. Completed by  1.8481848184818481 %
+Master:  Iteration 85/4545. Completed by  1.87018701870187 %
+Master:  Iteration 86/4545. Completed by  1.892189218921892 %
+Master:  Iteration 87/4545. Completed by  1.914191419141914 %
+Master:  Iteration 88/4545. Completed by  1.9361936193619362 %
+Master:  Iteration 89/4545. Completed by  1.9581958195819582 %
+Master:  Iteration 90/4545. Completed by  1.9801980198019802 %
+  train accuracy: 0.70606, test accuracy: 0.6885, train loss: 0.8550934195518494, test loss: 0.9204465746879578
+  grad norm train: 81.22584533691406, test: 91.23176574707031
+  used step-size: 0.008
+Master:  Iteration 91/4545. Completed by  2.002200220022002 %
+Master:  Iteration 92/4545. Completed by  2.024202420242024 %
+Master:  Iteration 93/4545. Completed by  2.046204620462046 %
+Master:  Iteration 94/4545. Completed by  2.0682068206820685 %
+Master:  Iteration 95/4545. Completed by  2.0902090209020905 %
+Master:  Iteration 96/4545. Completed by  2.112211221122112 %
+Master:  Iteration 97/4545. Completed by  2.134213421342134 %
+Master:  Iteration 98/4545. Completed by  2.156215621562156 %
+Master:  Iteration 99/4545. Completed by  2.178217821782178 %
+Master:  Iteration 100/4545. Completed by  2.2002200220022003 %
+  train accuracy: 0.75104, test accuracy: 0.7299, train loss: 0.7204177379608154, test loss: 0.781168520450592
+  grad norm train: 5.224005699157715, test: 7.523203372955322
+  used step-size: 0.008
+Master:  Iteration 101/4545. Completed by  2.2222222222222223 %
+Master:  Iteration 102/4545. Completed by  2.2442244224422443 %
+Master:  Iteration 103/4545. Completed by  2.2662266226622663 %
+Master:  Iteration 104/4545. Completed by  2.2882288228822882 %
+Master:  Iteration 105/4545. Completed by  2.31023102310231 %
+Master:  Iteration 106/4545. Completed by  2.332233223322332 %
+Master:  Iteration 107/4545. Completed by  2.354235423542354 %
+Master:  Iteration 108/4545. Completed by  2.376237623762376 %
+Master:  Iteration 109/4545. Completed by  2.398239823982398 %
+Master:  Iteration 110/4545. Completed by  2.42024202420242 %
+  train accuracy: 0.76928, test accuracy: 0.7483, train loss: 0.6723858714103699, test loss: 0.7383264303207397
+  grad norm train: 2.9009203910827637, test: 2.2886133193969727
+  used step-size: 0.008
+Master:  Iteration 111/4545. Completed by  2.442244224422442 %
+Master:  Iteration 112/4545. Completed by  2.4642464246424645 %
+Master:  Iteration 113/4545. Completed by  2.4862486248624864 %
+Master:  Iteration 114/4545. Completed by  2.5082508250825084 %
+Master:  Iteration 115/4545. Completed by  2.5302530253025304 %
+Master:  Iteration 116/4545. Completed by  2.5522552255225524 %
+Master:  Iteration 117/4545. Completed by  2.5742574257425743 %
+Master:  Iteration 118/4545. Completed by  2.5962596259625963 %
+Master:  Iteration 119/4545. Completed by  2.6182618261826183 %
+Master:  Iteration 120/4545. Completed by  2.6402640264026402 %
+  train accuracy: 0.7838, test accuracy: 0.759, train loss: 0.6247844099998474, test loss: 0.7062464356422424
+  grad norm train: 1.0155431032180786, test: 1.3976644277572632
+  used step-size: 0.008
+Master:  Iteration 121/4545. Completed by  2.662266226622662 %
+Master:  Iteration 122/4545. Completed by  2.684268426842684 %
+Master:  Iteration 123/4545. Completed by  2.706270627062706 %
+Master:  Iteration 124/4545. Completed by  2.7282728272827286 %
+Master:  Iteration 125/4545. Completed by  2.7502750275027505 %
+Master:  Iteration 126/4545. Completed by  2.7722772277227725 %
+Master:  Iteration 127/4545. Completed by  2.794279427942794 %
+Master:  Iteration 128/4545. Completed by  2.816281628162816 %
+Master:  Iteration 129/4545. Completed by  2.838283828382838 %
+Master:  Iteration 130/4545. Completed by  2.8602860286028604 %
+  train accuracy: 0.79724, test accuracy: 0.7698, train loss: 0.587053120136261, test loss: 0.6811185479164124
+  grad norm train: 2.599034070968628, test: 2.330698251724243
+  used step-size: 0.008
+Master:  Iteration 131/4545. Completed by  2.8822882288228824 %
+Master:  Iteration 132/4545. Completed by  2.9042904290429044 %
+Master:  Iteration 133/4545. Completed by  2.9262926292629263 %
+Master:  Iteration 134/4545. Completed by  2.9482948294829483 %
+Master:  Iteration 135/4545. Completed by  2.9702970297029703 %
+Master:  Iteration 136/4545. Completed by  2.9922992299229922 %
+Master:  Iteration 137/4545. Completed by  3.014301430143014 %
+Master:  Iteration 138/4545. Completed by  3.036303630363036 %
+Master:  Iteration 139/4545. Completed by  3.058305830583058 %
+Master:  Iteration 140/4545. Completed by  3.08030803080308 %
+  train accuracy: 0.81032, test accuracy: 0.7792, train loss: 0.5533508062362671, test loss: 0.6601841449737549
+  grad norm train: 4.418832302093506, test: 3.6815185546875
+  used step-size: 0.008
+Master:  Iteration 141/4545. Completed by  3.102310231023102 %
+Master:  Iteration 142/4545. Completed by  3.1243124312431245 %
+Master:  Iteration 143/4545. Completed by  3.1463146314631465 %
+Master:  Iteration 144/4545. Completed by  3.1683168316831685 %
+Master:  Iteration 145/4545. Completed by  3.1903190319031904 %
+Master:  Iteration 146/4545. Completed by  3.2123212321232124 %
+Master:  Iteration 147/4545. Completed by  3.2343234323432344 %
+Master:  Iteration 148/4545. Completed by  3.2563256325632564 %
+Master:  Iteration 149/4545. Completed by  3.278327832783278 %
+Master:  Iteration 150/4545. Completed by  3.3003300330033 %
+  train accuracy: 0.80994, test accuracy: 0.7738, train loss: 0.5594035983085632, test loss: 0.6747230887413025
+  grad norm train: 12.961089134216309, test: 12.46396255493164
+  used step-size: 0.008
+Master:  Iteration 151/4545. Completed by  3.3223322332233227 %
+Master:  Iteration 152/4545. Completed by  3.3443344334433447 %
+Master:  Iteration 153/4545. Completed by  3.3663366336633667 %
+Master:  Iteration 154/4545. Completed by  3.3883388338833886 %
+Master:  Iteration 155/4545. Completed by  3.4103410341034106 %
+Master:  Iteration 156/4545. Completed by  3.4323432343234326 %
+Master:  Iteration 157/4545. Completed by  3.4543454345434546 %
+Master:  Iteration 158/4545. Completed by  3.476347634763476 %
+Master:  Iteration 159/4545. Completed by  3.498349834983498 %
+Master:  Iteration 160/4545. Completed by  3.52035203520352 %
+  train accuracy: 0.82758, test accuracy: 0.7901, train loss: 0.5057314038276672, test loss: 0.6356244683265686
+  grad norm train: 1.0259898900985718, test: 3.014878511428833
+  used step-size: 0.008
+Master:  Iteration 161/4545. Completed by  3.542354235423542 %
+Master:  Iteration 162/4545. Completed by  3.564356435643564 %
+Master:  Iteration 163/4545. Completed by  3.586358635863587 %
+Master:  Iteration 164/4545. Completed by  3.608360836083609 %
+Master:  Iteration 165/4545. Completed by  3.6303630363036308 %
+Master:  Iteration 166/4545. Completed by  3.6523652365236527 %
+Master:  Iteration 167/4545. Completed by  3.6743674367436743 %
+Master:  Iteration 168/4545. Completed by  3.6963696369636962 %
+Master:  Iteration 169/4545. Completed by  3.718371837183718 %
+Master:  Iteration 170/4545. Completed by  3.74037403740374 %
+  train accuracy: 0.83526, test accuracy: 0.7947, train loss: 0.48552754521369934, test loss: 0.6241534352302551
+  grad norm train: 7.355844020843506, test: 4.781665325164795
+  used step-size: 0.008
+Master:  Iteration 171/4545. Completed by  3.762376237623762 %
+Master:  Iteration 172/4545. Completed by  3.784378437843784 %
+Master:  Iteration 173/4545. Completed by  3.806380638063806 %

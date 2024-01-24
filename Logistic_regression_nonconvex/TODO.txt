@@ -1,0 +1,14 @@
+# First consider Logistic Regression:
+n=20|100|1000|n_data, datasets=mushrooms|w8a|a9a|phishing, overlap=1, lr=1|2|4|8|16|32|64 ----
+method: EF21 -- Top1|Top2|MixK|CompK(k'=sqrt(d), d/2)
+method: EF22 -- MixK|CompK(k'=sqrt(d), d/2)
+
+n=1000, datasets=mushrooms|w8a, overlap=2|sqrt(n)|n, lr=1|2|4|8|16|32|64 ----
+method: EF21 -- Top1|Top2|MixK|CompK(k'=sqrt(d), d/2)
+method: EF22 -- MixK|CompK(k'=sqrt(d), d/2)
+
+# Repeat it under Quadratic Function:
+The same setting.
+
+# Have time -- Work on DIANA with RandK compressor
+

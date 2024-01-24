@@ -1,0 +1,1967 @@
+
+
+\documentclass[nohyperref]{article}
+\usepackage{graphicx}
+\graphicspath{{plots/}}
+\DeclareGraphicsExtensions{.pdf,.png,.jpg}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+% Recommended, but optional, packages for figures and better typesetting:
+\usepackage{microtype}
+\usepackage{graphicx}
+% \usepackage{subfigure}
+\usepackage{booktabs} % for professional tables
+
+\usepackage{algorithm}
+\usepackage{algorithmic}
+%\usepackage{algpseudocode}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+%\usepackage{amssymb}
+\usepackage{mathtools}
+%\usepackage[english]{babel}
+\usepackage{verbatim}
+%\usepackage{fullpage}
+%\usepackage{comment}
+\usepackage{hyperref}
+%\usepackage{cite}
+%\usepackage{titletoc}
+\usepackage{natbib}
+%\usepackage{microtype}
+%\usepackage{nicefrac}
+\usepackage{multirow}
+% \usepackage{caption}
+\usepackage{subcaption}
+
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{remark}{Remark}
+
+\usepackage[colorinlistoftodos,bordercolor=orange,backgroundcolor=orange!20,linecolor=orange,textsize=scriptsize]{todonotes}
+\newcommand{\laurent}[1]{\todo[inline]{\textbf{Laurent: }#1}}
+\newcommand{\grisha}[1]{\todo[inline]{\textbf{Grisha: }#1}}
+\newcommand{\elnur}[1]{\todo[inline]{\textbf{Elnur: }#1}}
+\newcommand{\dmitry}[1]{\todo[inline]{\textbf{Dmitry: }#1}}
+\newcommand{\peter}[1]{\todo[inline]{\textbf{Peter: }#1}}
+\newcommand{\kai}[1]{\todo[inline]{\textbf{Kai: }#1}}
+
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\minimize}{\mathrm{minimize}}
+\newcommand{\sqnorm}[1]{\left\| #1 \right\|^2}
+\newcommand{\Exp}[1]{\mathbb{E}\!\left[ #1 \right]}
+\newcommand{\oma}{\omega_{\mathrm{av}}}
+\newcommand{\gv}{v}
+
+\newcommand{\xx}{\hat{x}^0}
+
+\usepackage{pifont}
+\newcommand{\cmark}{\textcolor{green}{\ding{51}}}%
+\newcommand{\xmark}{\textcolor{red}{\ding{55}}}%
+
+\usepackage{xspace}
+\usepackage{scalefnt}
+\newcommand{\DIANA}{{\sf\scalefont{0.91}{DIANA}}\xspace}
+\newcommand{\EFOR}{{\sf\scalefont{0.91}{EF21}}\xspace}
+\newcommand{\EFBV}{{\sf\scalefont{0.91}{EF-BV}}\xspace}
+\newcommand{\SDIANA}{{\sf\scalefont{0.91}{DIANA}}\xspace}
+\newcommand{\SEFOR}{{\sf\scalefont{0.91}{EF21}}\xspace}
+\newcommand{\SEFBV}{{\sf\scalefont{0.91}{EF-BV}}\xspace}
+
+\newcommand{\eqdef}{\coloneqq}
+
+% Attempt to make hyperref and algorithmic work together better:
+\newcommand{\theHalgorithm}{\arabic{algorithm}}
+
+\usepackage{icml2022}
+
+% If accepted, instead use the following line for the camera-ready submission:
+%\usepackage[accepted]{icml2020}
+
+% The \icmltitle you define below is probably too long as a header.
+% Therefore, a short form for the running title is supplied here:
+%\icmltitlerunning{EF-BV: New Error Feedback Principle}
+\icmltitlerunning{A Unified Theory of Error Feedback and Variance Reduction}
+
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to LaTeX to determine where to break the
+% lines. Using \AND forces a line break at that point. So, if LaTeX puts 3 of 4
+% authors names on the first line, and the last on the second line, try using
+% \AND instead of \And before the third author name.
+
+
+\begin{document}
+
+	\twocolumn[
+	\icmltitle{A Unified Theory of Error Feedback and Variance Reduction Mechanisms \\for Controlling Biased and Unbiased Gradient Compressors \\in Distributed Optimization}
+	%\icmltitle{EF-BV: New Error Feedback Principle for \\Distributed Optimization with Compression}
+
+	% It is OKAY to include author information, even for blind
+	% submissions: the style file will automatically remove it for you
+	% unless you've provided the [accepted] option to the icml2020
+	% package.
+
+	% List of affiliations: The first argument should be a (short)
+	% identifier you will use later to specify author affiliations
+	% Academic affiliations should list Department, University, City, Region, Country
+	% Industry affiliations should list Company, City, Region, Country
+
+	% You can specify symbols, otherwise they are numbered in order.
+	% Ideally, you should not use this facility. Affiliations will be numbered
+	% in order of appearance and this is the preferred way.
+	\icmlsetsymbol{equal}{*}
+
+
+	\begin{icmlauthorlist}
+		\icmlauthor{Laurent Condat}{to}
+		\icmlauthor{Kai}{to}
+		\icmlauthor{Peter Richt\'arik}{to}
+			\end{icmlauthorlist}
+
+	\icmlaffiliation{to}{King Abdullah University of Science and Technology (KAUST), Thuwal, Saudi Arabia}
+
+	\icmlcorrespondingauthor{Laurent Condat}{see https://lcondat.github.io/}
+
+	% You may provide any keywords that you
+	% find helpful for describing your paper; these are used to populate
+	% the "keywords" metadata in the PDF but will not be shown in the document
+	\icmlkeywords{Machine Learning, ICML}
+
+	\vskip 0.3in
+	]
+
+	% this must go after the closing bracket ] following \twocolumn[ ...
+
+	% This command actually creates the footnote in the first column
+	% listing the affiliations and the copyright notice.
+	% The command takes one argument, which is text to display at the start of the footnote.
+	% The \icmlEqualContribution command is standard text for equal contribution.
+	% Remove it (just {}) if you do not need this facility.
+
+	\printAffiliationsAndNotice{}  % leave blank if no need to mention equal contribution
+	%\printAffiliationsAndNotice{\icmlEqualContribution} % otherwise use the standard text.
+
+	\begin{abstract}
+	%In distributed or federated optimization and learning, communication between the different computing units is often the bottleneck. Hence, compression is widely used to reduce the number of bits sent within each communication round of iterative algorithms. There are two classes of compression operators and algorithms making use of them: 1) unbiased random compressors, for which the DIANA algorithm of Mishchenko et al. (2019) is the current state of the art; 2) biased and contractive compressors, like the popular and effective top-k, harnessed with error feedback (EF), a.k.a error compensation, mechanisms to ensure convergence; the EF21 algorithm proposed last year by Richt\'arik et al. (2021) is the current state of the art. These two classes of compression schemes and algorithms are distinct, with different analyses and proof techniques. In this paper, we propose to unify them into a single framework, with one algorithm, which we name EF-BV, which recovers DIANA and EF21 as particular cases. We prove linear convergence of EF-BV when the function to minimize has the Polyak-Lojasiewicz property. EF-BV can be used with a new, larger class of compressors, which includes unbiased and biased contractive compressors as particular cases, and has two parameters, the bias and the variance. These gives a finer control and allows EF-BV to inherit the best of the two worlds: like EF21 and unlike DIANA, biased compressors like top-k, whose good performance in practice is recognized, can be used. And like DIANA and unlike EF21, independent randomness at the compressors allows to mitigate the effects of compression, with the convergence rate improving when the number of parallel workers is large. This is the first time that an algorithm with all these features is proposed. Thus, we believe that our 2022 EF algorithm, EF-BV, paves the way for more communication-efficient distributed learning.
+	%
+	In distributed or federated optimization and learning, communication between the different computing units is often the bottleneck, and gradient compression is a widely used technique for reducing the number of bits sent within each communication round of iterative methods. There are two classes of compression operators and separate algorithms making use of them. In the case of unbiased random compressors with bounded variance (e.g., rand-k), the DIANA algorithm of Mishchenko et al.\ (2019), which implements a variance reduction technique for handling the variance introduced by compression, is the current state of the art. In the case of biased and contractive compressors (e.g., top-k), the EF21 algorithm of Richt\'arik et al.\ (2021), which implements an error-feedback mechanism for handling the error introduced by compression, is the current state of the art. These two classes of compression schemes and algorithms are distinct, with different analyses and proof techniques. In this paper, we unify them into a single framework and propose a new algorithm, recovering DIANA and EF21 as particular cases. We prove linear convergence under certain conditions. Our general approach works with a new, larger class of compressors, which includes unbiased and biased compressors as particular cases, and has two parameters, the bias and the variance. These gives a finer control and allows us to inherit the best of the two worlds: like EF21 and unlike DIANA, biased compressors, like top-k, whose good performance in practice is recognized, can be used. And like DIANA and unlike EF21, independent randomness at the compressors allows to mitigate the effects of compression, with the convergence rate improving when the number of parallel workers is large. This is the first time that an algorithm with all these features is proposed. Our approach takes a step towards better understanding of two so-far distinct worlds of communication-efficient distributed learning.
+	\end{abstract}
+
+
+	\section{Introduction}
+
+
+
+	In the big data era, the explosion in size and complexity of the data
+	arises in parallel to a shift towards distributed computations~\cite{ver21},
+	as modern hardware increasingly relies on the power of uniting many parallel units into one system. For distributed optimization and learning tasks, specific issues arise, such as
+	decentralized data storage. In the modern paradigm of \emph{federated learning}
+	%One of the approaches of turning the raw data into information is via federated learning
+	\cite{ja2016,mcm17,kai19,li20}, a potentially huge number of devices, with their owners' data stored on each of them, are involved in the collaborative process of
+	training a global machine learning model. The goal is to exploit the wealth of useful information lying in the \emph{heterogeneous} data stored across the network of such devices.
+	But users are increasingly sensitive to privacy concerns and prefer their data to never leave their devices. Thus, the devices have to \emph{communicate} the right amount of information back and forth with a distant server, for this distributed learning process to work.
+	\textbf{Communication}, which can be costly and slow, is the main bottleneck in this framework. So, it is of primary importance to devise novel algorithmic strategies, which are efficient in terms of computation and communication complexities. A natural and widely used idea is
+	 to make use of (lossy) \textbf{compression}, to reduce the size of the communicated messages \cite{ali17,wen17,wan18,GDCI,alb20,bas20,dut20,sat20,xu21}.
+	 In this paper, we propose a stochastic gradient descent (SGD)-type method for distributed optimization, which uses possibly \emph{biased} and randomized compression operators. Our algorithm is variance-reduced \cite{han19,gor202,gow20a}; that is, it converges to the exact solution, with fixed stepsizes, without any restrictive assumption on the functions to minimize.
+
+
+
+	\textbf{Problem.}\ \ We consider the convex optimization problem
+	\begin{equation}
+	%\mathrm{Find}\ x^\star \in \argmin_{x\in\mathbb{R}^d}\, %f(x)\eqdef
+	\minimize_{x\in\mathbb{R}^d}\;\frac{1}{n}\sum_{i=1}^n f_i(x) + R(x),\label{eqpro1}
+	\end{equation}
+	where $d\geq 1$ is the model dimension; %of the model $x^\star$ to estimate, which is supposed to exist;
+	$R:\mathbb{R}^d\rightarrow \mathbb{R}\cup\{+\infty\}$ is a  proper, closed, convex function \cite{bau17}, whose proximity operator
+\begin{equation*}
+\mathrm{prox}_{\gamma R} : x \mapsto \argmin_{y\in \mathbb{R}^d} \Big\{ \gamma R(y)+\frac{1}{2}\|x-y\|^2 \Big\}
+\end{equation*}
+is easy to compute, for any $\gamma>0$~\cite{par14,con19,con22};
+	$n\geq 1$ is the number of functions; each function $f_i:\mathbb{R}^d \rightarrow\mathbb{R}$ is convex and $L_i$-smooth, for some $L_i>0$; that is, $f_i$ is differentiable on $\mathbb{R}^d$ and its gradient $\nabla f_i$ is $L_i$-Lipschitz continuous: for every $x\in\mathbb{R}^d$ and $x'\in\mathbb{R}^d$,
+	\begin{equation*}
+	\|\nabla f_i(x)-\nabla f_i(x')\|\leq L_i \|x-x'\|.
+	\end{equation*}
+
+
+	We set $L_{\max}\eqdef\max_i L_i$ and $\tilde{L}\eqdef\sqrt{\frac{1}{n}\sum_{i=1}^n L_i^2}$. %We have .
+	The average function
+	\begin{equation*}
+	f\eqdef \frac{1}{n}\sum_{i=1}^n f_i
+	\end{equation*}
+	%$f=\frac{1}{n}\sum_{i=1}^n f_i$
+	is $L$-smooth, for some $L\leq \tilde{L} \leq L_{\max}$.
+	%TODO expliquer. L\leq  \tilde{L}
+	A minimizer of $f+R$ is supposed to exist.
+
+	For any integer $m\geq 1$, we define the set $\mathcal{I}_m\eqdef \{1,\ldots,m\}$.
+	%$L\leq \max_i L_i$. %we set $f^\star = f(x^\star)$.
+
+	%$f$ is supposed to be $\mu$-strongly convex, for some $\mu>0$; that is, $f-\frac{\mu}{2}\|\cdot\|^2$ is convex.
+	%This implies that the minimizer $x^\star\in\mathbb{R}^d$ of $f$ exists and is unique. We set $f^\star = f(x^\star)$.
+
+
+	%Our goal is to minimize $f_i:\mathbb{R}^d \rightarrow\mathbb{R}$
+	%Each function $f_i:\mathbb{R}^d \rightarrow\mathbb{R}$ is convex and $L_i$-smooth and $f=\frac{1}{N}\sum_{i=1}^n f_i$ is $L$-smooth. We set $\tilde{L}=\sqrt{\frac{1}{N}\sum_i L_i^2}$. We have $L\leq \tilde{L}$.
+
+%The goal is to minimize $f$. A minimizer $x^\star\in\mathbb{R}^d$ of $f$ is supposed to exist and we set $f^\star = f(x^\star)$.
+
+
+	%client-server model
+	%parler de variance reduction
+	%parler de zoo of SGD type methods.
+	%trouver un setting non distribué ou applicable? Par exemple ma combinaison de top-k-rand-k en subsampling et en minibatch donne bien certaines fonctions choisies par le server et d'autres choisies aleatoirement avec quelles constantes ?
+
+Distributed proximal SGD solves the problem \eqref{eqpro1} by iterating
+\begin{equation}
+	x^{k+1} \eqdef \mathrm{prox}_{\gamma R} \Big(x^k -  \frac{\gamma}{n} \sum_{i=1}^n g_i^k\Big),\label{eqpsgd}
+	\end{equation}
+where $\gamma$ is a stepsize and the vectors $g_i^k$ are possibly stochastic estimates of the gradients $\nabla f_i(x^k)$, which are cheap to compute or communicate.
+ Compression is typically performed by the application of a possibly randomized operator $\mathcal{C}:\mathbb{R}^d\rightarrow \mathbb{R}^d$; that is, for any $x$, $\mathcal{C}(x)$ denotes a realization of a random variable, whose probability distribution depends on $x$. Compressors have  the property that it is much easier/faster to transfer $\mathcal{C}(x)$ than the original message $x$. This can be achieved in several ways, for instance by sparsifying the input vector~\cite{ali18}, or by quantizing its entries~\cite{ali17,Cnat}, or via a combination of these and other approaches~\cite{Cnat,alb20, bez20}. There are two classes of compression operators often studied in the literature: 1) unbiased compression operators, satisfying a variance bound proportional to the squared norm of the input vector, and 2) biased compression operators, whose square distortion is contractive with respect to the squared norm of the input vector; we present these two classes in Sections \ref{secun} and \ref{secbia}, respectively.
+
+ \textbf{Prior work: DIANA with unbiased compressors.}\ \
+An important contribution to the field in the recent years is the variance-reduced SGD-type method called \linebreak\textbf{DIANA}~\cite{mis19}, which uses unbiased compressors; it is shown in Fig.~\ref{fig1}. \DIANA was analyzed and extended in several ways, including bidirectional compression and acceleration,  see, e.g., \citet{hor19,mis20,con21,Cnat,phi20,li2020,gor20}, and \citet{gor202,kha20} for general theories about SGD-type methods, including variants using unbiased compression of (stochastic) gradients.
+
+
+\textbf{Prior work: Error Feedback with biased contractive compressors.}\ \
+Our understanding of distributed optimization using biased compressors is more limited. The key complication comes from the fact that their naive use within methods like  gradient descent can lead to divergence, as widely observed in practice, see also Example~1 in \citet{bez20}.
+%Example 1
+\emph{Error feedback} (EF), also called error compensation, techniques were proposed to fix this issue and obtain convergence, initially as heuristics \cite{sei14}. Theoretical advances have been made in the recent years in the analysis of EF, see the discussions and references in \citet{ric21}. But the question of whether it is possible to obtain a linearly convergent EF method in the general heterogeneous data setting, relying on biased compressors only, was still an open problem; until last year, 2021, when Richtarik et al. re-engineered the classical EF mechanism and came up with a new algorithm, called \textbf{EF21}% (for Error Feedback in the year 2021)
+~\cite{ric21}. It was then extended in several ways, including bidirectional compression and the presence of a regularizer $R$ in \eqref{eqpro1}, in \citet{fat21}. \EFOR  is shown in Fig.~\ref{fig1}.
+
+
+\textbf{DIANA and EF21: differences.}\ \
+\EFOR is a breakthrough in the field of distributed optimization with compression, but there are still several open questions. In particular, \DIANA with independent random compressors has a $\frac{1}{n}$ factor in the %term capturing the
+increase of iteration complexity due to the use of compression. That is, when $n$ is very large, as is typically the case in practice, the iteration complexity does not suffer from the use of compression. \EFOR does not have this property: its convergence rate does not depend on the number $n$ of workers. Also, the convergence analysis and proof techniques for the two algorithms are different: the linear convergence analysis of \DIANA relies on $\|x^k-x^\star\|^2$ and $\|h_i^k-\nabla f_i(x^\star)\|^2$ tending to zero, where $x^k$ is the estimate of the solution $x^\star$ at iteration $k$ and $h_i^k$ is the control variate maintained at node $i$, whereas the analysis of \EFOR relies on $f(x^k)-f(x^\star)$ and $\|h_i^k-\nabla f_i(x^k)\|^2$ tending to zero, and under different assumptions. This work aims at filling this gap.
+
+\textbf{Challenge.}\ \ We want to address the following open problem:
+
+\begin{table*}[t]
+\caption{Desirable properties of a distributed compressed gradient descent algorithm converging to an exact solution of \eqref{eqpro1} and whether they are satisfied by the state-of-the-art algorithms \SDIANA and \SEFOR and their currently-known analysis, and the proposed algorithm \SEFBV.}
+\label{tab1}
+\centering
+\begin{tabular}{ccccc}
+&\DIANA&\EFOR&\EFBV (new)\\
+\hline
+handles unbiased compressors in $\mathbb{U}(\omega)$ for any $\omega\geq 0$&\cmark&\cmark${}^1$&\cmark\\
+\hline
+handles biased contractive compressors in $\mathbb{B}(\alpha)$ for any $\alpha\in (0,1]$&\xmark&\cmark&\cmark\\
+\hline
+handles  compressors in $\mathbb{C}(\eta,\omega)$ for any $\eta\in [0,1)$, $\omega\geq 0$&\xmark&\cmark${}^1$&\cmark\\
+\hline
+recovers \DIANA and \EFOR as particular cases&\xmark&\xmark&\cmark\\
+\hline
+the convergence rate improves when $n$ is large&\cmark&\xmark&\cmark\\
+\hline
+\end{tabular}
+
+{\small ${}^1$: with pre-scaling with $\lambda<1$, so that $\mathcal{C}'= \lambda\mathcal{C}\in\mathbb{B}(\alpha)$ is used instead of $\mathcal{C}$}
+\end{table*}
+
+%\begin{center}
+%\begin{minipage}{7.5cm}%
+{\itshape
+Is it possible to design an algorithm, which combines the advantages of \DIANA and \EFOR? That is, such that:
+%which has the following properties:
+\begin{enumerate}
+	\item[a.]
+It deals with unbiased compressors, biased contractive compressors, and possibly even more.
+	\item[b.]
+It recovers \DIANA and \EFOR as particular cases.
+\item[c.]
+Its convergence rate improves with $n$ large.
+	\end{enumerate}%
+}%\end{minipage}
+%\end{center}
+
+\textbf{Contributions.}\ \ We answer positively the question above and propose a new algorithm, which we name \EFBV, for \emph{Error Feedback with Bias-Variance decomposition}, which for the first time satisfies the three aforementioned properties. This is illustrated in Tab.~\ref{tab1}. More precisely, our contributions are:
+\begin{enumerate}
+	\item We propose a new, larger class of compressors,
+	% $\mathbb{C}(\eta,\omega)$,
+	which includes unbiased and biased contractive compressors as particular cases, and has two parameters, the \textbf{bias} $\eta$ and the \textbf{variance} $\omega$. A third parameter $\oma$ describes  the resulting variance from the parallel compressors after aggregation, and is key to getting faster convergence with large $n$, by allowing larger stepsizes than in \EFOR in our framework.
+	%new class of compressors -> allows new proof technique for the analysis of algos and yields new algos
+	\item We propose a new algorithm, named \EFBV, which exploits the properties of the compressors in the new class using two scaling parameters $\lambda$ and $\nu$. For particular values of $\lambda$ and $\nu$, \EFOR and \DIANA are recovered as particular cases. But by setting the values of $\lambda$ and $\nu$ optimally with respect to $\eta$, $\omega$, $\oma$ in \EFBV, faster convergence can be obtained.
+	%\item We bridge the gap between the 2 worlds of algorithms using unbiased compressors and error feedback algorithms using biased contractive compressors.
+	\item We prove linear convergence of \EFBV under a Kurdyka--{\L}ojasiewicz (KL) condition of $f+R$, which is weaker than strong convexity of $f+R$. 	Even for \EFOR and \DIANA, this is new.
+	%To the best of our knowledge, linear convergence of \EFOR and \DIANA has not been established under strong convexity of $f+R$, let alone under such a KL condition.
+
+	\item We provide new insights on \EFOR and \DIANA; for instance, we prove linear convergence of \DIANA with biased compressors.
+
+	\end{enumerate}%
+
+
+	%\subsection{Contributions}
+
+
+
+
+\section{Compressors and their Properties}
+
+\subsection{Unbiased Compressors}\label{secun}
+
+For every $\omega\geq 0$, we introduce the set $\mathbb{U}(\omega)$ of unbiased compressors, which are randomized operators of the form $\mathcal{C}:\mathbb{R}^d\rightarrow \mathbb{R}^d$, satisfying
+\begin{equation}
+\mathbb{E}[\mathcal{C}(x)]=x\quad\mbox{and}\quad \mathbb{E}[\|\mathcal{C}(x)-x\|^2]\leq \omega\|x\|^2,\quad \forall x\in\mathbb{R}^d,
+\label{eq4}
+\end{equation}
+where $\Exp{\cdot}$ denotes the expectation.
+The smaller $\omega$, the better, and $\omega=0$ if and only if $\mathcal{C}=\mathrm{Id}$, the identity operator, which does not compress.  We can remark that if $\mathcal{C}\in\mathbb{U}(\omega)$ is deterministic, then $\mathcal{C}=\mathrm{Id}$. So, unbiased compressors are random ones. A classical unbiased compressor is \texttt{rand-}$k$, for some $k\in \mathcal{I}_d$, which keeps $k$ elements chosen uniformly at random, multiplied by $\frac{d}{k}$, and sets the other elements to 0.  \texttt{rand-}$k$ belongs to $\mathbb{U}(\omega)$ with $\omega=\frac{d}{k}-1$, see for instance \citet{bez20}.
+
+
+
+\subsection{Biased Contractive Compressors}\label{secbia}
+
+For every $\alpha\in (0,1]$, we introduce the set $\mathbb{B}(\alpha)$ of biased contractive compressors, which are possibly randomized operators of the form $\mathcal{C}:\mathbb{R}^d\rightarrow \mathbb{R}^d$, satisfying
+\begin{equation}
+ \mathbb{E}[\|\mathcal{C}(x)-x\|^2]\leq (1-\alpha)\|x\|^2,\quad \forall x\in\mathbb{R}^d.\label{eq5}
+\end{equation}
+We use the term `contractive' to reflect the fact that the squared norm in the left hand side of \eqref{eq5} is smaller, in expectation, than the one  in the right hand side, since $1-\alpha <1$. This is not the case in \eqref{eq4}, where $\omega$ can be arbitrarily large.
+The larger $\alpha$, the better, and $\alpha=1$ if and only if $\mathcal{C}=\mathrm{Id}$.
+Biased compressors need not be random: a classical biased and deterministic compressor is \texttt{top-}$k$, for some $k\in\mathcal{I}_d$, which keeps the $k$ elements with largest absolute values unchanged and sets the other elements to 0.  \texttt{top-}$k$ belongs to $\mathbb{B}(\alpha)$ with $\alpha=\frac{k}{d}$,  see for instance \citet{bez20}.
+
+%an unbiased compressor in U(omega) with omega>0 cannot be in C(alpha) for alpha.
+
+
+\subsection{New General Class of Compressors}\label{sec23}
+
+
+We refer to \citet{bez20}, Table 1 in \citet{saf21}, \citet{sze22} for examples of compressors in $\mathbb{U}(\omega)$ or $\mathbb{B}(\alpha)$, and to \citet{xu20} for a system-oriented survey.
+
+In this work, we introduce a new, more general class of compressors, ruled by 2 parameters, to allow for a finer characterization of their properties. Indeed, with any compressor $\mathcal{C}$, we can do a bias-variance decomposition of the compression error:
+%for any compressor $\mathcal{C}$ and $x\in\mathbb{R}^d$,
+for every $x\in\mathbb{R}^d$,
+\begin{equation}
+ \mathbb{E}\big[\|\mathcal{C}(x)-x\|^2\big] = \big\| \mathbb{E}[\mathcal{C}(x)]-x\big\|^2 + \mathbb{E}\Big[\big\|\mathcal{C}(x)-\mathbb{E}[\mathcal{C}(x)]\big\|^2\Big].\label{eqbiva}
+ \end{equation}
+Therefore, to better characterize the properties of compressors, we propose to parameterize these two parts, instead of only their sum: for every  $\eta \in [0,1)$ and $\omega\geq 0$,
+we introduce the new class $\mathbb{C}(\eta,\omega)$ of possibly random and biased operators, which are randomized operators of the form $\mathcal{C}:\mathbb{R}^d\rightarrow \mathbb{R}^d$, satisfying, for every $x\in\mathbb{R}^d$, the two properties:
+\begin{align*}
+\mathrm{(i)}\quad &\big\| \mathbb{E}[\mathcal{C}(x)]-x\big\|\leq \eta \|x\|,\\
+\mathrm{(ii)}\quad& \mathbb{E}\Big[\big\|\mathcal{C}(x)-\mathbb{E}[\mathcal{C}(x)]\big\|^2\Big]\leq \omega\|x\|^2.
+\end{align*}
+Thus, $\eta$ and $\omega$ control the relative bias and variance of the compressor% in $\mathbb{C}(\eta,\omega)$
+, respectively.
+Note that $\omega$ can be arbitrarily large, but the compressors will be scaled in order to control the compression error, as we discuss  in Sect.~\eqref{secsca}.
+ On the other hand, we must have $\eta<1$, since otherwise, no scaling can keep the compressor's discrepancy under control.
+ %be contractive; that is
+%belong to $\mathbb{B}(\alpha)$, for some $\alpha \in (0,1]$.
+
+We have the following properties:
+
+1) $\mathbb{C}(\eta,0)$ is the class of deterministic compressors in $\mathbb{B}(\alpha)$, with $1-\alpha=\eta^2$.
+
+
+2) $\mathbb{C}(0,\omega)=\mathbb{U}(\omega)$, for every $\omega\geq 0$. In words, if its bias $\eta$ is zero,  the compressor is unbiased with relative variance $\omega$.
+
+3) Because of the bias-variance decomposition \eqref{eqbiva},  if $\mathcal{C}\in\mathbb{C}(\eta,\omega)$ with $\eta^2+\omega < 1$, then $\mathcal{C}\in\mathbb{B}(\alpha)$ with
+\begin{equation}
+1-\alpha = \eta^2+\omega.\label{eqalpha}
+\end{equation}
+4) Conversely, if $\mathcal{C}\in\mathbb{B}(\alpha)$, one easily sees from \eqref{eqbiva} that there exist $\eta \leq \sqrt{1-\alpha}$ and $\omega \leq 1-\alpha$ such that $\mathcal{C}\in\mathbb{C}(\eta,\omega)$.
+
+
+
+Thus, the new class $\mathbb{C}(\eta,\omega)$  generalizes the two previously known classes $\mathbb{U}(\omega)$ and $\mathbb{B}(\alpha)$. Actually, for compressors in $\mathbb{U}(\omega)$ and $\mathbb{B}(\alpha)$, we can just use \DIANA and  \EFOR, and our proposed algorithm \EFBV will stand out when the compressors are neither in $\mathbb{U}(\omega)$ nor in $\mathbb{B}(\alpha)$; that is why the strictly larger class $\mathbb{C}(\eta,\omega)$ is needed for our purpose.
+
+
+
+
+\subsection{Average Variance of Several Compressors}\label{secavv}
+
+Given $n$ compressors $\mathcal{C}_i$, $i\in \mathcal{I}_n$, we are interested in how they behave in average. Indeed distributed algorithms consist, at every iteration, in compressing vectors in parallel, and then averaging them. Thus, we
+ introduce the \textbf{average relative variance}
+%this is not the case for $\chic$ ?
+$\oma\geq 0$ of the compressors, %and the \textbf{offset} $\zeta \in [0,\oma]$,
+such that, for every $x_i\in\mathbb{R}^d$, $i\in\mathcal{I}_n$,
+\begin{equation}
+\Exp{ \sqnorm{ \frac{1}{n}\sum_{i=1}^n \big(\mathcal{C}_i(x_i)-\Exp{\mathcal{C}_i(x_i)}\big)} } \leq \frac{\oma}{n} \sum_{i=1}^n \sqnorm{x_i }.%-\zeta \sqnorm{ \frac{1}{n}\sum_{i=1}^n \gv_i}.
+\label{eqbo}
+\end{equation}
+When every $\mathcal{C}_i$ is in $\mathbb{C}(\eta,\omega)$, for some $\eta \in [0,1)$ and $\omega\geq 0$, then
+ $\oma \leq \omega$; but $\oma$ can be much smaller than  $\omega$, and we will exploit this property in \EFBV. We can also remark that $
+\frac{1}{n} \sum_{i=1}^n \mathcal{C}^i \in \mathbb{C}(\eta,\oma)$.
+
+
+An important property is the following: if the $\mathcal{C}_i$ are mutually independent, since the variance of a sum of random variables is the sum of their variances, then
+\begin{equation*}
+\oma=\frac{\omega}{n}.
+\end{equation*}
+There are other cases where the compressors are dependent but $\oma$ is much smaller than $\omega$. Notably, the following setting can be used to model partial participation of $m$ among $n$ workers at every iteration of a distributed algorithm, for some $m\in \mathcal{I}_n$, with the $\mathcal{C}_i$ defined jointly as follows: for every  $i\in \mathcal{I}_n$ and $x_i\in\mathbb{R}^d$,
+\begin{equation*}
+\mathcal{C}_i(x_i) =\begin{cases} \;\frac{n}{m} x_i & \text{ if }\;  i\in\Omega \\
+\;0 & \text{ otherwise} \end{cases},
+\end{equation*}
+where $\Omega$ is a subset of $\mathcal{I}_n$ of size $m$ chosen uniformly at random.
+ This is sometimes called $m$-nice sampling \cite{ric16,gow20}. Then  every $\mathcal{C}_i$ belongs to $\mathbb{U}(\omega)$, with $\omega=\frac{n-m}{m}$, and, as shown for instance in   \citet{qia19} and Proposition~1 in \citet{con21},  \eqref{eqbo} is satisfied with
+\begin{equation*}
+\oma=\frac{n-m}{m(n-1)}=\frac{\omega}{n-1}
+\end{equation*}
+ (with $\oma=0$ if $n=m=1$). %That is, $\oma=\frac{\omega}{n-1}$.
+
+
+
+\subsection{Scaling Compressors}\label{secsca}
+
+A compressor $\mathcal{C}\in\mathbb{C}(\eta,\omega)$ does not necessarily belong to $\mathbb{B}(\alpha)$ for any $\alpha \in (0,1]$, since $\omega$ can be arbitrarily large. %However, this property is needed for variance reduction of the compression error to be possible.
+Fortunately, the compression error can be kept under control %this can be fixed
+by \emph{scaling} the compressor; that is, using  $\lambda \mathcal{C}$ instead of $\mathcal{C}$, for some scaling parameter $\lambda\leq 1$. We have:
+\begin{proposition}
+\label{prop3}
+Let $\mathcal{C}\in\mathbb{C}(\eta,\omega)$, for some  $\eta \in [0,1)$ and $\omega\geq 0$, and $\lambda\in (0,1]$. Then
+$\lambda\mathcal{C}\in\mathbb{C}(\eta',\omega')$ with $\omega'= \lambda^2 \omega$ and $\eta '=\lambda\eta+1-\lambda\in(0,1]$.\end{proposition}
+
+\begin{proof}Let $x\in\mathbb{R}^d$. $\mathbb{E}\Big[\big\|\lambda\mathcal{C}(x)-\mathbb{E}[\lambda\mathcal{C}(x)]\big\|^2\Big]
+= \lambda^2\mathbb{E}\Big[\big\|\mathcal{C}(x)-\mathbb{E}[\mathcal{C}(x)]\big\|^2\Big]
+\leq \lambda^2\omega\|x\|^2$ and $\big\| \mathbb{E}[\lambda\mathcal{C}(x)]-x\big\|\leq \lambda
+\big\| \mathbb{E}[\mathcal{C}(x)]-x\big\|+(1-\lambda) \|x\|\leq (\lambda\eta+1-\lambda)\|x\|$.\end{proof}
+
+So, scaling deteriorates the bias, with $\eta'\geq \eta$, but linearly, whereas it reduces the variance $\omega$ quadratically. This is key, since %good for our purpose: we will be able to decrease
+the total error factor $(\eta')^2+\omega'$ can be made smaller than 1 by choosing $\lambda$ sufficiently small:
+\begin{proposition}
+\label{propsmall}
+Let $\mathcal{C}\in\mathbb{C}(\eta,\omega)$, for some  $\eta \in [0,1)$ and $\omega\geq 0$. There exists $\lambda\in(0,1]$ such that
+$\lambda\mathcal{C}\in \mathbb{B}(\alpha)$, for some $\alpha = 1- (1-\lambda+\lambda\eta)^2-{\lambda}^2\omega \in (0,1]$, and the best such $\lambda$, maximizing $\alpha$, is
+\begin{equation*}
+\lambda^\star=\min\left(\frac{1-\eta}{(1-\eta)^2+\omega},1\right).
+\end{equation*}
+\end{proposition}
+
+\begin{proof}
+We define the polynomial $P:\lambda\mapsto(1-\lambda+\lambda\eta)^2+\lambda^2\omega$.
+After Proposition~\ref{prop3} and the discussion in Sect.~\ref{sec23}, we have to find $\lambda\in(0,1]$ such that $P(\lambda)<1$. Then
+$\lambda\mathcal{C}\in \mathbb{B}(\alpha)$, with $1-\alpha=P(\lambda)$. Since $P$ is a strictly convex quadratic function on $[0,1]$ with value $1$ and negative derivative $\eta-1$ at $\lambda=0$,  its minimum value on $[0,1]$ is smaller than 1 and is attained at $\lambda^\star$, which either satisfies the first-order condition $0 = P'(\lambda) = -2(1-\eta) +2\lambda\big((1-\eta)^2 + \omega\big)$, or, if this value is larger than 1, is equal to 1.
+\end{proof}
+
+% Indeed, $\lambda\mapsto (\eta')^2+\omega'=(1-\lambda+\lambda\eta)^2+\lambda^2\omega$ is a strictly convex quadratic function on $[0,1]$ with value $1$ and negative derivative $\eta-1$ in $\lambda=0$, so its minimum value on $[0,1]$, attained at $\lambda^\star\in (0,1]$, is smaller than 1, where
+%\begin{equation*}
+%\lambda^\star=\min\left(\frac{1-\eta}{(1-\eta)^2+\omega},1\right).
+%\end{equation*}
+%Thus, $\lambda^\star \mathcal{C}\in \mathbb{B}(\alpha)$, with  $\alpha=1- (1-\lambda^\star+\lambda^\star\eta)^2-{\lambda^\star}^2\omega \in (0,1]$.
+
+In particular, if $\eta=0$, Proposition~\ref{propsmall} recovers Lemma 8 of \citet{ric21}, according to which, for  $\mathcal{C}\in\mathbb{U}(\omega)$, $\lambda^\star \mathcal{C}\in \mathbb{B}(\frac{1}{\omega+1})$, with $\lambda^\star=\frac{1}{\omega+1}$.
+%and this lambda is also the best for use in DIANA, cf. MURANA paper.
+For instance, the scaled \texttt{rand-}$k$ compressor,
+%A classical unbiased compressor is \texttt{rand-}$k$, for some $k\in \{ 1,\ldots,d\}$,
+which keeps $k$ elements chosen uniformly at random unchanged and sets the other elements to 0, corresponds to scaling the unbiased \texttt{rand-}$k$ compressor, seen in Sect.~\ref{secun}, by $\lambda=\frac{k}{d}$.
+
+
+We can remark that scaling is used to mitigate the randomness of a compressor, but cannot be used to reduce its bias: if $\omega=0$, $\lambda^\star=1$.
+
+%$r_1 = (1-\lambda^\star+\lambda^\star\eta)^2+{\lambda^\star}^2\omega$ and we have $r_1<1$ (indeed, $\lambda\mapsto (1-\lambda+\lambda\eta)^2+\lambda^2\omega$ is a strictly convex quadratic function on $[0,1]$ with value $1$ and negative derivative $\eta-1$ in $\lambda=0$, so its minimum value on $[0,1]$, attained at $\lambda^\star\in (0,1]$, is $<1$).
+
+
+
+%So, how to choose $\lambda$ so that $\mathcal{C}'= \lambda \mathcal{C} \in \mathbb{B}(\alpha)$ for some
+
+%$\lambda$ will be chosen so that $\lambda \mathcal{C}_i \in \mathbb{B}(\alpha)$ for every $i$, for some $\alpha$.
+
+Our new algorithm \EFBV will have two scaling parameters: $\lambda$, to mitigate the compression error in the control variates used for variance reduction, just like above, and $\nu$, to mitigate the error in the stochastic gradient estimate, in a similar way but with $\omega$ replaced by $\oma$, since we have seen in Sect.~\ref{secavv} that $\oma$ characterizes the randomness after averaging %aggregation of
+the outputs of several compressors.
+
+\section{Proposed Algorithm \EFBV}
+
+We propose the algorithm \EFBV, shown in Fig.~\ref{fig1}. It makes use of compressors $\mathcal{C}_i^k \in \mathbb{C}(\eta,\omega)$, for some  $\eta \in [0,1)$ and $\omega\geq 0$, and we introduce $\oma\leq \omega$ such that \eqref{eqbo} is satisfied. That is, for any $x\in\mathbb{R}^d$, the $\mathcal{C}_i^k(x)$, for $i\in\mathcal{I}_n$ and $k\geq 0$, are distinct random variables; their laws might be the same or not, but they all lie in the class $\mathbb{C}(\eta,\omega)$. Also, $\mathcal{C}_i^k(x)$ and $\mathcal{C}_{i'}^{k'}(x')$, for $k\neq k'$, are independent; that is, any source of randomness at a given iteration is independent from the past.
+
+The compressors have the property that if their input is the zero vector, the compression error is zero, so we want to compress vectors that are close to zero, or at least converge to zero, to make the method variance-reduced. That is why each worker maintains a control variate $h_i^k$, converging, like $\nabla f_i(x^k)$, to $\nabla f_i(x^\star)$, for %when $x^k$ converges to
+some solution $x^\star$. This way, the difference vectors $\nabla f_i(x^k)-h_i^k$ converge to zero, and these are the vectors that are going to be compressed.
+%they are the vectors which are compressed.
+Thus,  \EFBV takes the form of the Distributed proximal SGD \eqref{eqpsgd}, with $g_i^k = h_i^k + \nu  \mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)$, where the scaling parameter $\nu$ will be used to make the compression error, averaged over $i$, small; that is, to make $g^{k+1}=\frac{1}{n}\sum_{i=1}^n g_i^k $ close to $\nabla f(x^k)$.
+
+In parallel, the control variates are updated similarly as $h_i^{k+1}= h_i^k + \lambda \mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)$, where the scaling parameter $\lambda$ is used to make the compression error small, individually for each $i$; that is, to make $h_i^{k+1}$ close to $\nabla f_i(x^k)$.
+
+
+\begin{figure*}[t]
+\begin{minipage}{.31\textwidth}
+	\begin{algorithm}[H]
+		\caption{\EFBV, proposed}
+		%\label{alg}
+		\begin{algorithmic}
+			\STATE
+			\noindent \textbf{Input:} Initial estimate $x^0 \in \mathbb{R}^d$ and $(h_i^0)_{i=1}^n$ in $\mathbb{R}^d$,
+			$h^0= \frac{1}{n}\sum_{i=1}^n h_i^0$, $\gamma>0$, $\lambda\in(0,1]$, $\nu\in(0,1]$
+			%\STATE \textbf{Initialize:} $x_i^0 \coloneqq \xx$, for all $i =1,\ldots,M$
+			\FOR{$k=0, 1, \ldots$}
+			%\STATE master broadcasts $x^k$ to all workers
+			\FOR{$i=1, 2, \ldots, n$ in parallel}
+			\STATE $d_i^k \coloneqq \mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)$
+			\STATE $h_i^{k+1} \coloneqq h_i^k + \lambda d_i^k$
+			\STATE send $d_i^k$ to master
+			\ENDFOR
+			\STATE at master:
+			\STATE $d^k \coloneqq \frac{1}{n}\sum_{i=1}^n d_i^k$
+			\STATE $h^{k+1} \coloneqq h^k + \lambda d^k$ %\quad \mbox{// we have }h^{k+1}= \frac{1}{n}\sum_{i=1}^n h_i^{k+1}\\
+			\STATE $g^{k+1} \coloneqq h^k + \nu d^k$ %$\quad \mbox{// stochastic gradient estimate of $\nabla f(x^k)$}
+			\STATE $x^{k+1} \coloneqq  \mathrm{prox}_{\gamma R}(x^k - \gamma g^{k+1})$
+			\STATE broadcast $x^{k+1}$ to all workers
+			\ENDFOR
+		\end{algorithmic}
+	\end{algorithm}
+	\end{minipage}%}
+	\ \ \ \ \ \ \begin{minipage}{.31\textwidth}
+	\begin{algorithm}[H]
+		\caption{\EFOR~\cite{ric21}}
+		%\label{alg}
+		\begin{algorithmic}
+			\STATE
+			\noindent \textbf{Input:} Initial estimate $x^0 \in \mathbb{R}^d$ and $(h_i^0)_{i=1}^n$ in $\mathbb{R}^d$,
+			$h^0= \frac{1}{n}\sum_{i=1}^n h_i^0$, $\gamma>0$
+			%\STATE \textbf{Initialize:} $x_i^0 \coloneqq \xx$, for all $i =1,\ldots,M$
+			\FOR{$k=0, 1, \ldots$}
+			%\STATE master broadcasts $x^k$ to all workers
+			\FOR{$i=1, 2, \ldots, n$ in parallel}
+			\STATE $d_i^k \coloneqq \mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)$
+			\STATE $h_i^{k+1} \coloneqq h_i^k +  d_i^k$
+			\STATE send $d_i^k$ to master
+			\ENDFOR
+			\STATE at master:
+			\STATE $d^k \coloneqq \frac{1}{n}\sum_{i=1}^n d_i^k$
+			%\STATE $h^{k+1} \coloneqq h^k + d^k$ %\quad \mbox{// we have }h^{k+1}= \frac{1}{n}\sum_{i=1}^n h_i^{k+1}\\
+			\STATE $g^{k+1} \coloneqq g^k +  d^k$ %$\quad \mbox{// stochastic gradient estimate of $\nabla f(x^k)$}
+			\STATE $x^{k+1}\coloneqq \mathrm{prox}_{\gamma R}(x^k - \gamma g^{k+1})$
+			\STATE broadcast $x^{k+1}$ to all workers
+			\ENDFOR
+		\end{algorithmic}
+	\end{algorithm}
+	\end{minipage}
+	\ \ \ \ \ \ \begin{minipage}{.31\textwidth}
+	\begin{algorithm}[H]
+		\caption{\DIANA \cite{mis19}}
+		%\label{alg}
+		\begin{algorithmic}
+			\STATE
+			\noindent \textbf{Input:} Initial estimates $x^0$  and $(h_i^0)_{i=1}^n$ in $\mathbb{R}^d$,
+			$h^0= \frac{1}{n}\sum_{i=1}^n h_i^0$,
+			$\gamma>0$, $\lambda\in(0,1]$
+			%\STATE \textbf{Initialize:}
+			\FOR{$k=0, 1, \ldots$}
+			%\STATE master broadcasts $x^k$ to all workers
+			\FOR{$i=1, 2, \ldots, n$ in parallel}
+			\STATE $d_i^k \coloneqq \mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)$
+			\STATE $h_i^{k+1} \coloneqq h_i^k + \lambda d_i^k$
+			\STATE send $d_i^k$ to master
+			\ENDFOR
+			\STATE at master:
+			\STATE $d^k \coloneqq \frac{1}{n}\sum_{i=1}^n d_i^k$
+			\STATE $h^{k+1} \coloneqq h^k + \lambda d^k$ %\quad \mbox{// we have }h^{k+1}= \frac{1}{n}\sum_{i=1}^n h_i^{k+1}\\
+			\STATE $g^{k+1} \coloneqq h^k +  d^k$ %$\quad \mbox{// stochastic gradient estimate of $\nabla f(x^k)$}
+			\STATE $x^{k+1} \coloneqq \mathrm{prox}_{\gamma R}(x^k - \gamma g^{k+1})$
+			\STATE broadcast $x^{k+1}$ to all workers
+			\ENDFOR
+		\end{algorithmic}
+	\end{algorithm}
+	\end{minipage}
+	\caption{\label{fig1}In the three algorithms, $g^k$ is an estimate of $\nabla f(x^k)$, the $h_i^k$ are control variates converging to
+	$\nabla f_i(x^\star)$, and their average $h^k= \frac{1}{n}\sum_{i=1}^n h_i^k$ is maintained and updated by the master.
+	\SEFOR is a particular case of \SEFBV, when $\nu=\lambda=1$ and the compressors are in $\mathbb{B}(\alpha)$; %(but note that the compressors are scaled beforehand).
+	then $h^k=g^k$ for every $k\geq 0$, so that we can remove the redundant variable $h^k$. \SDIANA is a particular case of \SEFBV, when $\nu=1$ and  the compressors are in $\mathbb{U}(\omega)$; then $g^{k}$ is an unbiased estimate of $\nabla f(x^k)$.}
+	\end{figure*}
+
+
+	\subsection{\EFOR as a Particular Case of \EFBV}\label{sec31}
+
+	There are two ways to recover \EFOR as a particular case of \EFBV:
+
+	1) If the compressors $\mathcal{C}_i^k$ are in $\mathbb{B}(\alpha)$, for some $\alpha\in (0,1]$, there is no need for scaling the compressors, and we can use \EFBV with $\lambda=\nu=1$. Then the variable $h^k$ in \EFBV becomes redundant with the gradient estimate $g^k$ and we can only keep the latter, which yields  \EFOR, as shown in Fig.~\ref{fig1}.
+
+	2) If the scaled compressors $\lambda\mathcal{C}_i^k$ are in $\mathbb{B}(\alpha)$, for some $\alpha\in (0,1]$ and $\lambda\in (0,1)$
+	(see Proposition~\ref{propsmall}), one  can simply %define ${\mathcal{C}'_i}^k= \lambda\mathcal{C}_i^k$, and
+	use these scaled compressors in \EFOR. This is equivalent to using  \EFBV with the original compressors $\mathcal{C}_i^k$, the scaling with $\lambda$ taking place inside the algorithm. But we must have $\nu=\lambda$ for this equivalence to hold.
+
+	Therefore, we consider thereafter that \EFOR corresponds to the particular case of  \EFBV with $\nu=\lambda \in (0,1]$ and $\lambda\mathcal{C}_i^k \in \mathbb{B}(\alpha)$, for some $\alpha\in (0,1]$, and is not only the original algorithm shown in Fig.~\ref{fig1},  which has no scaling parameter (but scaling might have been applied beforehand to make the compressors in  $\mathbb{B}(\alpha)$).
+
+	%for instance $\mathcal{C}_i^k \in \mathbb{U}(\omega)$ and $\lambda=\frac{1}{1+\omega}$, then \EFBV with $\nu=\lambda$ reverts to \EFOR. Indeed, one can simply make a change of variables and set ${\mathcal{C}_i^k}'= \lambda\mathcal{C}_i^k$, and  \EFOR used with the compressors ${\mathcal{C}_i^k}'$ (and no scaling, since there is no scaling parameter in \EFOR) is equivalent to
+	 %\EFBV used with the compressors $\mathcal{C}_i^k$ (and scaling with $\nu=\lambda<1$).
+
+	 %Therefore, we can consider that \EFBV with $\lambda=\nu$ and $\lambda\mathcal{C}_i^k \in \mathbb{B}(\alpha)$, for some $\alpha\in (0,1]$ is \EFOR.
+
+	\subsection{\DIANA as a Particular Case of \EFBV}\label{sec32}
+
+	%If the compressors $\mathcal{C}_i^k$ are in $\mathbb{U}(\omega)$, for some $\omega\geq 0$,
+	\EFBV with $\nu=1$  yields exactly \DIANA, as shown in Fig.~\ref{fig1}. \DIANA was only studied with unbiased compressors $\mathcal{C}_i^k\in\mathbb{U}(\omega)$, for some $\omega\geq 0$. In that case, $\Exp{g^{k+1}}=\nabla f(x^k)$, so that $g^{k+1}$ is an unbiased stochastic gradient estimate; this is not the case in \EFOR and \EFBV, in general. Also,
+	$\lambda=\frac{1}{1+\omega}$ is the usual choice in \DIANA, which is consistent with Proposition~\ref{propsmall}.
+
+	%Scaling is needed, and $\lambda=\frac{1}{1+\omega}$ is the recommended choice. We can note that in \DIANA,
+
+	%With unbiased compressors, in \EFBV, according to Theorem~1, it is recommended to use $\nu=\frac{1}{1+\oma}$. If $\oma \approx \frac{\omega}{n}$ and $n$ is large, $\nu\approx 1$, so that \EFBV becomes very similar to \DIANA. Therefore, \EFBV can be viewed as a generalization of \DIANA from unbiased compressors to compressors in the larger class of possibly biased compressors in $\mathbb{C}(\eta,\omega)$.
+
+	%With unbiased compressors, in \EFOR, \DIANA and \EFBV, we should use $\lambda=\frac{1}{\omega+1}$ and in \EFBV, $\nu=\frac{1}{\oma+1}$; thus, \EFBV interpolates between \DIANA (if $\oma$ is close to 0 so that $\lambda$ ) and \EFOR (if $\oma\approx \omega)$.
+
+\section{New Compressors}
+
+%In this section,
+We propose two new compressors in our class $\mathbb{C}(\eta,\omega)$.
+
+\subsection{\texttt{mix-}(k,k'): Mixture of \texttt{top-}k and \texttt{rand-}k}
+
+Let $k\in \mathcal{I}_d$ and $k'\in \mathcal{I}_d$, with $k+k'\leq d$. We propose the compressor \texttt{mix-}$(k,k')$. It maps $x\in\mathbb{R}^d$ to $x'\in\mathbb{R}^d$, defined as follows.
+Let $i_1,\ldots,i_k$ be distinct indexes in $\mathcal{I}_d$ such that $|x_{i_1}|,\ldots,|x_{i_k}|$ are the $k$ largest elements of $|x|$ (if this selection is not unique, we can choose any one). These coordinates are kept: $x'_{i_j}=x_{i_j}$, $j=1,\ldots,k$. In addition, $k'$ other coordinates chosen at random in the remaining ones are kept: $x'_{i_j}=x_{i_j}$, $j=k+1,\ldots,k+k'$, where $\{i_j : j=k+1,\ldots,k+k'\}$ is a subset of size $k'$ of $\mathcal{I}_d \backslash \{i_1,\ldots,i_k\}$ chosen uniformly at random. The other coordinates of $x'$ are set to zero.
+
+% with $x'_{i_1} = x_{i_1}$ where $|x_{i_1}|$ is the maximum element of $|x|$ (if it is not unique, we can choose any one), $x'_{i_2} = x_{i_2}$ for an index $i_2$ chosen at random in $\{1,\ldots,d\}\backslash \{i_1\}$, and all other $x'_i$ set at zero. We can show that $\mathcal{C}\in\mathbb{B}(\alpha)
+%$ with $\alpha = \frac{2}{d}$.
+
+%Proof:
+%\begin{align}
+ %\mathbb{E}[\|\mathcal{C}(\gv)-\gv\|^2]&=\sum_{i\in \{1,\ldots,d\}\backslash \{i_1\}} \frac{d-2}{d-1}|x_i|^2\\
+% &\leq \sum_{i=1}^d \frac{d-2}{d}|x_i|^2\\
+% &=\frac{d-2}{d}\|x\|^2
+%\end{align}
+
+%\begin{align}
+%& |x_{i_1}|\geq \frac{1}{d-1}\sum_{i\in \{1,\ldots,d\}\backslash \{i_1\}} |x_i|\\
+% \Rightarrow &\sum_{i=1}^d |x_i|^2 \geq \frac{d}{d-1}\sum_{i\in \{1,\ldots,d\}\backslash \{i_1\}} |x_i|^2
+%\end{align}
+
+
+
+
+\begin{proposition}
+\label{prop1}\texttt{mix-}$(k,k')\in \mathbb{C}(\eta,\omega)$ with $\eta =\frac{d-k-k'}{\sqrt{(d-k)d}}$ and $\omega=\frac{k'(d-k-k')}{(d-k)d}$.
+%$\omega= (\frac{d-2}{d-1})^2\frac{d-1}{d}=\frac{(d-2)^2}{d(d-1)}$.
+\end{proposition}
+As a consequence, \texttt{mix-}$(k,k')\in \mathbb{B}(\alpha)$ with $\alpha=1-\eta^2-\omega = 1-\frac{(d-k-k')^2}{(d-k)d}-\frac{k'(d-k-k')}{(d-k)d}=%\frac{(d-k)d-(d-2k)(d-k)}{(d-k)d}$
+\frac{k+k'}{d}$. This is the same $\alpha$ as for \texttt{top-}$(k+k')$ and scaled \texttt{rand-}$(k+k')$.
+
+
+\subsection{\texttt{comp-}(k,k'): Composition of \texttt{top-}k and \texttt{rand-}k}
+
+Let $k\in \mathcal{I}_d$ and $k'\in \mathcal{I}_d$, with $k\leq k'$. We propose the compressor \texttt{comp-}$(k,k')$, which is the composition of \texttt{top-}$k'$ and \texttt{rand-}$k$:
+\texttt{top-}$k'$  is applied first, then \texttt{rand-}$k$ is applied to the $k'$ selected (largest) elements.
+%More precisely, \texttt{rand-}$k'$ is applied to the $k$ largest elements of the vector.
+That is,  \texttt{comp-}$(k,k')$ maps $x\in\mathbb{R}^d$ to $x'\in\mathbb{R}^d$, defined as follows. Let $i_1,\ldots,i_{k'}$ be distinct indexes in $\mathcal{I}_d$ such that $|x_{i_1}|,\ldots,|x_{i_{k'}}|$ are the $k'$ largest elements of $|x|$ (if this selection is not unique, we can choose any one). Then
+$x'_{i_j}=\frac{k'}{k} x_{i_j}$, $j=1,\ldots,k$, where $\{i_j : j=1,\ldots,k\}$ is a subset of size $k$ of $\{i_1,\ldots,i_{k'}\}$ chosen uniformly at random. The other coordinates of $x'$ are set to zero.
+
+ \texttt{comp-}$(k,k')$ sends $k$ coordinates of its input vector, like \texttt{top-}$k$ and \texttt{rand-}$k$, whatever $k'$. We can note that  \texttt{comp-}$(k,d)={}$\texttt{rand-}$k$ and \texttt{comp-}$(k,k)={}$\texttt{top-}$k$. We have:
+
+\begin{proposition}
+\label{prop2}
+ \texttt{comp-}$(k,k')\in \mathbb{C}(\eta,\omega)$ with $\eta =\sqrt{\frac{d-k'}{d}}$ and $\omega=\frac{k'-k}{k}$.
+\end{proposition}
+
+
+
+
+
+%As a consequence, $\mathcal{C}\in \mathbb{B}(\alpha)$ with $\alpha=1-\eta^2-\omega = 1-\frac{(d-2k)^2}{(d-k)d}-\frac{k(d-2k)}{(d-k)d}=\frac{2k}{d}$. This is the same $\alpha$ as for top-$2k$ and scaled rand-$2k$.
+
+%\subsection{A composition of \texttt{rand-}k and \texttt{top-}k}
+
+%Let $k\in I$ and $k'\in I$, with $k'\leq k$. We consider the compressor $\mathcal{C}$, which is the composition of \texttt{rand-}$k$ and  \texttt{top-}$k'$:
+%\texttt{rand-}$k$  is applied first, then \texttt{top-}$k'$ is applied to the $k$ selected elements. That is, $\mathcal{C}$ maps $x\in\mathbb{R}^d$ to $x'\in\mathbb{R}^d$, defined as follows. Let $\{i_1,\ldots,i_k\}$ be a subset of size $k$ of $I$ chosen uniformly at random. Then let $\{i_j : j=1,\ldots,k'\}$ be the indexes of the $k'$ elements with largest absolute values among $\{x_{i_1},\ldots, x_{i_k}\}$ (if this selection is not unique, we can choose any one). Then  $x'_{i_j}=\frac{d}{k} x_{i_j}$, $j=1,\ldots,k'$, and the other coordinates of $x'$ are set to zero.
+
+
+
+%\textbf{Proposition 3}:  $\mathcal{C}\in \mathbb{C}(\eta,\omega)$ with $\eta =\sqrt{\frac{d-k}{d}}$ and $\omega=\frac{k-k'}{k'}$.
+
+
+\section{Linear Convergence Results}\label{sec5}
+
+We will prove linear convergence of \EFBV under conditions weaker than strong convexity of $f+R$.
+
+When $R=0$, we will consider the  Polyak-Lojasiewicz (PL) condition on $f$: $f$ is said to satisfy the  PL condition with constant $\mu>0$ if, %there exists $\mu>0$ such that,
+ for every $x\in\mathbb{R}^d$,
+\begin{equation*}
+\|\nabla f(x)\|^2\geq 2\mu\big(f(x)-f^\star\big),
+\end{equation*}
+where $f^\star = f(x^\star)$, for any minimizer $x^\star$ of $f$. This holds if, for instance, $f$ is $\mu$-strongly convex; that is, $f-\frac{\mu}{2}\|\cdot\|^2$ is convex.
+
+
+
+%$f$ is supposed to be $\mu$-strongly convex, for some $\mu>0$; that is, $f-\frac{\mu}{2}\|\cdot\|^2$ is convex.
+	%This implies that the minimizer $x^\star\in\mathbb{R}^d$ of $f$ exists and is unique. We set $f^\star = f(x^\star)$.
+
+In the general case, we will consider the  Kurdyka--{\L}ojasiewicz (KL) condition with exponent $1/2$ \cite{att09,kar16} on $f+R$: $f+R$ is said to satisfy the  KL condition with constant $\mu>0$ if,  for every $x\in\mathbb{R}^d$ and $u\in  \partial R(x)$,
+\begin{equation}
+\|\nabla f(x)+u\|^2\geq 2\mu\big(f(x)+R(x)-f^\star-R^\star\big),\label{eqKL}
+\end{equation}
+where $f^\star = f(x^\star)$ and $R^\star= R(x^\star)$, for any minimizer $x^\star$ of $f+R$. This holds if, for instance, $R=0$ and $f$ satisfies the PL condition with constant $\mu$, so that the KL condition generalizes the PL condition to the general case $R\neq 0$. The KL condition also holds if $f+R$ is $\mu$-strongly convex \cite{kar16}, for which it is sufficient that $f$ is $\mu$-strongly convex, or $R$ is $\mu$-strongly convex.
+
+
+%SC implique PL: https://math.stackexchange.com/questions/3804327/proof-that-strong-convexity-implies-polyak-lojasiewicz-inequality-is-satisfied/3804961
+
+%essayer autre technique utilisant juste la convexite de f comme celle de r pour avoir du nabla f(x^k+1)
+
+%The KL inequality has been used to analyze the convergence of the classic proximal-point algorithm [Attouch and Bolte, 2009] as well as a variety of other optimization methods [Attouch et al., 2013]. In machine learning, a popular generalization of gradient descent is proximal- gradient methods. Bolte et al. [2015] show that the proximal-gradient method has a linear convergence rate for functions satisfying the KL inequality, while Li and Pong [2016] give a related result.
+%The inequality is satisfied if f is SC. This is the usual assumption used to show a linear convergence rate for the proximal-gradient algorithm [Schmidt et al., 2011], although we note that the above analysis is much simpler than standard arguments.
+%M. Schmidt, N. L. Roux, and F. Bach. Convergence rates of inexact proximal-gradient methods for convex optimization. NIPS, pages 1458–1466, 2011.
+
+%https://optml.lehigh.edu/files/2016/06/ICML2016_Schmidt.pdf
+%What can we say about non-smooth problems?
+%Well-known generalization of PL is the KL inequality.
+%Attach and Bolte [2009] show linear rate for proximal-point.
+
+
+In the rest of this section, we assume that $\mathcal{C}_i^k \in \mathbb{C}(\eta,\omega)$, for some  $\eta \in [0,1)$ and $\omega\geq 0$, and we introduce $\oma\leq \omega$ such that \eqref{eqbo} is satisfied.
+According to the discussion in Sect.~\ref{secsca} (see also Remark~\ref{rem1} below), we define the optimal values for the scaling parameters $\lambda$ and $\nu$:
+\begin{align*}
+\lambda^\star&\eqdef\min\left(\frac{1-\eta}{(1-\eta)^2+\omega},1\right),\\
+\nu^\star&\eqdef\min\left(\frac{1-\eta}{(1-\eta)^2+\oma},1\right).
+\end{align*}
+%We also define
+%\begin{align*}
+%r &\eqdef (1-\lambda^\star+\lambda^\star\eta)^2+{\lambda^\star}^2\omega,\\
+%r_{\mathrm{av}} &\eqdef (1-\nu^\star+\nu^\star\eta)^2+{\nu^\star}^2\oma.
+%\end{align*}
+Given $\lambda \in (0,1]$ and $\nu \in (0,1]$,
+we define for convenience
+ \begin{align*}
+r &\eqdef (1-\lambda+\lambda\eta)^2+{\lambda}^2\omega,\\
+r_{\mathrm{av}} &\eqdef (1-\nu+\nu\eta)^2+{\nu}^2\oma.
+\end{align*}
+%  We have  $0\leq r_{\mathrm{av}}\leq r<1$.
+%, as discussed in Sect.~\ref{secsca}.
+as well as
+$s^\star \eqdef \sqrt{\frac{1+r}{2r}}-1$ and $\theta^\star \eqdef s^\star(1+s^\star)\frac{r}{r_{\mathrm{av}}}$.
+
+Note that if $r<1$, according to Proposition~\ref{prop3} and \eqref{eqalpha}, $\lambda \mathcal{C}_i^k \in \mathbb{B}(\alpha)$, with $\alpha=1-r$.
+
+Our linear convergence results for \EFBV are the following:
+
+\begin{theorem}\label{theo1}Suppose that $R=0$ and $f$ satisfies the PL condition with some constant  $\mu>0$.
+In \EFBV, suppose that $\nu \in (0,1]$, $\lambda \in (0,1]$ is such that $r<1$, and
+%(this is the case if $\lambda=\lambda^*)$.
+%$\lambda=\lambda^\star$, $\nu=\nu^\star$, and
+\begin{equation}
+0<\gamma \leq \frac{1}{L+\tilde{L}\sqrt{\frac{r_{\mathrm{av}}}{r}}\frac{1}{s^\star}}.\label{equpb1}
+\end{equation}
+For every $k\geq 0$, define the Lyapunov function
+\begin{equation*}
+\Psi^k \eqdef f(x^k)-f^\star + \frac{\gamma}{2\theta^\star}  \frac{1}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^{k}}.
+\end{equation*}
+where $f^\star \eqdef f(x^\star)$, for any minimizer $x^\star$ of $f$.
+
+Then, for every $k\geq 0$,
+\begin{align}
+\Exp{\Psi^{k}}
+&\leq \left(\max\left(1-\gamma\mu, {\frac{r+1}{2}}\right) \right)^k\Psi^0.\label{eqsdgerg}
+\end{align}
+\end{theorem}
+
+%When applied to \EFOR, i.e.\ whenever $\lambda=\nu$, so that $r=r_{\mathrm{av}}=1-\alpha$, we recover the result of \citet{ric21}, up to slightly different constants.
+
+\begin{theorem}\label{theo2}
+Suppose that $f+R$ satisfies the  the KL condition with some constant $\mu>0$.
+%In \EFBV, suppose that $\lambda=\lambda^\star$, $\nu=\nu^\star$, and
+In \EFBV, suppose that $\nu \in (0,1]$, $\lambda \in (0,1]$ is such that $r<1$, and
+\begin{equation}
+0<\gamma \leq \frac{1}{2L+\tilde{L}\sqrt{\frac{r_{\mathrm{av}}}{r}}\frac{1}{s^\star}}.\label{equpb2}
+\end{equation}
+For every $k\geq 0$, define the Lyapunov function
+\begin{align*}
+\Psi^k &\eqdef f(x^k)+R(x^k)-f^\star - R^\star \\
+&\quad + \frac{\gamma}{2\theta^\star}  \frac{1}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^{k}},
+\end{align*}
+where $f^\star \eqdef f(x^\star)$ and $R^\star \eqdef R(x^\star)$, for any minimizer $x^\star$ of $f+R$.
+Then, for every $k\geq 0$,
+\begin{align}
+\Exp{\Psi^{k}}  &\leq \left(\max\left({\frac{1}{1+\frac{1}{2}\gamma\mu}},\frac{r+1}{2}\right)\right)^k\Psi^0.\label{eqsdgerg2}
+\end{align}
+\end{theorem}
+
+\begin{remark}[choice of $\lambda$, $\nu$, $\gamma$ in \EFBV]\label{rem1}
+\normalfont In Theorems \ref{theo1} and \ref{theo2}, the rate is better if $r$ is small and $\gamma$ is large. So, we should take $\gamma$ equal to the upper bound in \eqref{equpb1} and \eqref{equpb2}, since there is no reason to choose it smaller. Also, this upper bound is large
+if $r$ and $r_{\mathrm{av}}$ are small. As discussed in Sect.~\ref{secsca}, $r$ and $r_{\mathrm{av}}$ are minimized with $\lambda=\lambda^\star$ and $\nu=\nu^\star$ (which implies that $ r_{\mathrm{av}}\leq r<1$), so this is the recommended choice. Also, with this choice of $\lambda$, $\nu$, $\gamma$, there is no parameter left to tune in the algorithm, which is a nice feature.
+\end{remark}
+%proof: we first see that we have to minimize r_av, so that nu=nu^\star. Then necessarily r_av <= r. then... (weird: seems valid only if r>=1/4).
+
+\begin{remark}[low noise regime]\label{rem2}
+When the compression error tends to zero, i.e.\ $\eta$ and $\omega$ tend to zero, and we use accordingly $\lambda \rightarrow 1$, $\nu \rightarrow 1$, such that $r_{\mathrm{av}}/r$ remains bounded,
+ then $\mathcal{C}_i^k\rightarrow\mathrm{Id}$, $r\rightarrow 0$, and $\frac{1}{s^\star}\rightarrow 0$. Hence, \EFBV reverts to proximal gradient descent $x^{k+1} = \mathrm{prox}_{\gamma R} \big(x^k -\nabla f(x^k)\big)$.
+\end{remark}
+
+\begin{remark}[high noise regime]\label{rem3}
+When the compression error becomes large,  i.e.\ $\eta\rightarrow 1$ or $\omega\rightarrow +\infty$, then $r\rightarrow 1$ and $\frac{1}{s^\star}\sim \frac{4}{1-r}$. Hence, the asymptotic complexity of  \EFBV to achieve $\epsilon$-accuracy, when $\gamma=\Theta\Big(\frac{1}{L+\tilde{L}\sqrt{\frac{r_{\mathrm{av}}}{r}}\frac{1}{s^\star}}\Big)$, is
+\begin{equation}
+\mathcal{O}\left(\left(\frac{L}{\mu}+\left(\frac{\tilde{L}}{\mu}\sqrt{\frac{r_{\mathrm{av}}}{r}}+1\right)\frac{1}{1-r}\right)
+\log\left(\frac{1}{\epsilon}\right)\right).\label{eqasy1}
+\end{equation}
+\end{remark}
+
+\subsection{Implications for \EFOR}
+
+Let us assume that $\nu=\lambda$, so that  \EFBV reverts to  \EFOR, as explained in Sect.~\ref{sec31}.
+%As explained in Sect.~\ref{sec31}, \EFOR corresponds to  \EFBV with  $\nu=\lambda$.
+Then, if we don't assume the prior knowledge of $\oma$, or equivalently if $\oma=\omega$, Theorem~\ref{theo1} with $r=r_{\mathrm{av}}$ recovers  the linear convergence result of  \EFOR in \citet{ric21}, up to slightly different constants.
+
+However,  in these same conditions, Theorem~\ref{theo2} is new:  linear convergence of \EFOR with  $R\neq 0$ was only shown in Theorem 13 of \citet{fat21}, under the assumption that there exists $\mu>0$, such that
+%assumption 5
+for every $x\in\mathbb{R}^d$,
+\begin{align*}
+&{\textstyle\frac{1}{\gamma^2}}\!\sqnorm{x-\mathrm{prox}_{\gamma R}\big(x-\gamma \nabla f(x)
+\big)}\\%\label{evbhf}\\
+&\qquad\geq 2\mu\big(f(x)+R(x)-f^\star-R^\star\big).\notag
+\end{align*}
+This condition %on $f$ and $R$
+generalizes the PL condition, since it reverts to it when $R=0$, but it is different from the KL condition, and it is not clear when it is satisfied, in particular whether it is implied by strong convexity of $f+R$. %In fact, one can show that if $R$ is differentiable, the condition \eqref{evbhf} implies the KL condition with same $\mu$, so that the latter is weaker.
+
+
+
+%https://arxiv.org/pdf/1802.04477.pdf
+%Note that PL condition implies that every stationary point is a global minimum, but it does not imply there is a unique minimum unlike the strongly convex condition
+
+The asymptotic complexity  to achieve $\epsilon$-accuracy of \EFOR with
+$\gamma=\Theta\Big(\frac{1}{L+\tilde{L}/s^\star}\Big)$ is
+\begin{equation}
+\mathcal{O}\left(\frac{\tilde{L}}{\mu}\frac{1}{1-r}
+\log\left(\frac{1}{\epsilon}\right)\right)\label{eqasy2}
+\end{equation}
+(where we recall that $1-r=\alpha$, with the scaled compressors in $\mathbb{B}(\alpha)$).
+Thus,  for a given problem and compressors, the improvement of  \EFBV over  \EFOR is the factor
+$\sqrt{\frac{r_{\mathrm{av}}}{r}}$ in
+\eqref{eqasy1}, which can be small if $n$ is large.
+
+
+Theorems \ref{theo1} and \ref{theo2} provide a new  insight about  \EFOR: if we exploit the knowledge that $\mathcal{C}_i^k \in \mathbb{C}(\eta,\omega)$ and the corresponding constant $\oma$, and if $\oma<\omega$, then $r_{\mathrm{av}}<r$, so that, based on \eqref{equpb1} and \eqref{equpb2}, $\gamma$ can be chosen larger than with the default assumption  that $r_{\mathrm{av}}=r$. As a consequence, convergence will be faster. This illustrates the interest of our new finer parameterization of compressors with $\eta$, $\omega$, $\oma$. However, it is only half the battle to make use of the factor $\frac{r_{\mathrm{av}}}{r}$ in \EFOR: the property $\oma<\omega$ is only really exploited if $\nu=\nu^\star$ in \EFBV (since $r_{\mathrm{av}}$ is minimized this way). In other words, there is no reason to set $\nu=\lambda$ in \EFBV, when a larger value of $\nu$ is allowed in Theorems \ref{theo1} and \ref{theo2} and yields faster convergence.
+
+
+% \EFBV (with $\lambda=\lambda^\star$ and $\nu=\nu^\star$) improves upon \EFOR (i.e. $\nu=\lambda=\lambda^\star$, so that $r=r_{\mathrm{av}}=	1-\alpha$),
+%thanks to the factor
+%$\sqrt{\frac{r_{\mathrm{av}}}{r}}$, which is always $\leq 1$ and can be small if $n$ is large.
+
+
+
+%In Theorems \ref{theo1} and \ref{theo2},  $\frac{1}{s^\star}$ appears, and we have $\frac{1}{s^\star}\sim \frac{4}{1-r}$ when $r\rightarrow 1$. Hence, the asymptotic complexity of  \EFBV to achieve $\epsilon$-accuracy, when $\gamma=\Theta\Big(\frac{1}{L+\tilde{L}\sqrt{\frac{r_{\mathrm{av}}}{r}}\frac{1}{s^\star}}\Big)$, is
+%\begin{equation*}
+%\mathcal{O}\left(\left(\frac{L}{\mu}+\left(\frac{\tilde{L}}{\mu}\sqrt{\frac{r_{\mathrm{av}}}{r}}+1\right)\frac{1}{1-r}\right)
+%\log\left(\frac{1}{\epsilon}\right)\right).
+%\end{equation*}
+
+%Hence, for a given problem and compressors \EFBV (with $\lambda=\lambda^\star$ and $\nu=\nu^\star$) improves upon \EFOR (i.e. $\nu=\lambda=\lambda^\star$, so that $r=r_{\mathrm{av}}=	1-\alpha$),
+%thanks to the factor  $\sqrt{\frac{r_{\mathrm{av}}}{r}}$, which is always $\leq 1$ and can be small if $n$ is large.
+
+
+%We introduce, for every $k\geq 0$, $G_i^k= \sqnorm{\nabla f_i(x^k)-h_i^{k}}$, for every $i=1,\ldots,n$, and
+%$G^k= \frac{1}{n}\sum_{i=1}^n G_i^k$.
+%We introduce the Lyapunov function, for every $k\geq 0$,
+%\begin{equation}
+%\Psi^k = f(x^k)-f^\star + \frac{\gamma}{2\theta^\star}  G^k.
+%\end{equation}
+
+
+
+%We can note that $\frac{1}{s^\star}\sim \frac{4}{1-r}$ when $r\rightarrow 1$,
+
+\subsection{Implications for \DIANA}
+
+Let us assume that $\nu=1$, so that  \EFBV reverts to  \DIANA, as explained in Sect.~\ref{sec32}. This choice is allowed in Theorems \ref{theo1} and \ref{theo2}, so that they provide new convergence results for \DIANA. Assuming that the compressors are unbiased, i.e.\ $\mathcal{C}_i^k\in \mathbb{U}(\omega)$ for some $\omega\geq 0$, we have the following result on  \DIANA \citep[Corollary 2 with $B=\sqrt{2}$]{con21}:
+
+\begin{proposition}\label{propdiana}
+Suppose that $f$ is $\mu$-strongly convex, for some $\mu>0$, and that in \DIANA, $\lambda=\frac{1}{1+\omega}$,
+$0<\gamma \leq \frac{1}{L_{\max}+L_{\max}(1+\sqrt{2})^2\oma}$. For every $k\geq 0$, define the Lyapunov function%\pagebreak
+\begin{align*}
+\Phi^k &\eqdef \sqnorm{x^k-x^\star} \\
+&\quad+  (2+\sqrt{2})\gamma^2\oma (1+\omega)\frac{1}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^\star)-h_i^k},\label{eqll2}
+\end{align*}
+where $x^\star$ is the minimizer of $f+R$, which exists and is unique.
+Then, for every $k\geq 0$,
+\begin{align*}
+\Exp{\Phi^{k}}
+&\leq \left(\max\left(1-\gamma\mu, \frac{\frac{1}{2}+\omega}{1+\omega}\right) \right)^k\Phi^0.
+\end{align*}
+\end{proposition}
+Thus, noting that $r=\frac{\omega}{1+\omega}$, so that $\frac{r+1}{2}=\frac{\frac{1}{2}+\omega}{1+\omega}$, the rate is exactly the same as in Theorem~\ref{theo1}, but with a different Lyapunov function.
+
+Theorems \ref{theo1} and \ref{theo2} have the advantage over Proposition \ref{propdiana}, that linear convergence is guaranteed under the PL or KL assumptions, which are weaker than strong convexity of $f$. Also, the constants $L$ and $\tilde{L}$ appear instead of $L_{\max}$. This shows a better dependence with respect to the problem. However, noting that $r=\frac{\omega}{1+\omega}$, $r_{\mathrm{av}}=\oma$, $\frac{1}{s^\star}\sim 4\omega$, the factor $\sqrt{\frac{r_{\mathrm{av}}}{r}}\frac{1}{s^\star}$ scales like $\sqrt{\oma}\omega$, which is worse that $\oma$. This means that $\gamma$ can certainly be chosen larger in Proposition \ref{propdiana} than in Theorems \ref{theo1} and \ref{theo2}, leading to faster convergence.
+
+%The only advantage of \eqref{propdiana} over Theorems 1 \ref{theo1} and \ref{theo2} is that typically, a larger $\gamma$ is allowed, which leads to
+
+However, Theorems \ref{theo1} and \ref{theo2} bring a major highlight: for the first time, they establish convergence of \DIANA with biased compressors. These results are stated in the Appendix. Interestingly, \DIANA, used beyond its initial setting with compressors in $\mathbb{B}(\alpha)$ with $\lambda=1$, just reverts to (the original)
+ \EFOR, as shown in Fig.~\ref{fig1}. This shows how our unified framework reveals connections between these two algorithms and  unleashes their potential.
+
+
+In any case, according to our results, with biased compressors, it is better to use \EFBV than \DIANA: there is no interest in choosing $\nu=1$ instead of $\nu=\nu^\star$, which minimizes $r_{\mathrm{av}}$ and allows for a larger $\gamma$, for faster convergence.
+
+Finally, we can remark that for unbiased compressors with $\oma \ll 1$, for instance if $\oma \approx \frac{\omega}{n}$ with $n$ larger than $\omega$, then $\nu^\star=\frac{1}{1+\oma}\approx 1$. Thus, in this particular case,  \EFBV with $\nu=\nu^\star$ and \DIANA are essentially the same algorithm.  This is another sign that  \EFBV with $\lambda=\lambda^\star$ and $\nu=\nu^\star$ is a generic and robust choice, since it recovers   \EFOR and  \DIANA in settings where these algorithms shine.
+
+
+
+
+ \section{Experiments}
+
+ We conduct experiments to illustrate the performance of \EFBV. They are detailed in the Appendix.
+
+\pagebreak
+% %valid the efficiency of our proposed EF-BV. More specifically, we consider the quadratic and logistic regression objective functions with convex regularizer. We show EF21 is a special case of EF-BV and EF-BV is better than EF21 in other cases.
+
+% %We conduct extensive experiments to validate the efficiency of our proposed EF-BV. We consider the quadratic and logistic regression objective functions with a convex regularizer. We show EF21 is a particular case of EF-BV and EF-BV is better than EF21 in other cases.
+
+% \subsection{Datasets and Experimental Setup}
+% We consider the heterogeneous data distributed regime, which means all distributed nodes store different datapoints but with the same learning function. To make our proposed setting more realistic, we consider the case that different nodes share partial data. We first adopt the datasets from LibSVM~\cite{chang2011libsvm} and then we split them into $n\in\{20, 100, 1000, N\}$, where $N$ is the number of data points. We set the overlapping ratio to be $\xi\in\{1, 2, \sqrt{n}, n\}$. The details of applied datasets and statistics are attached in the supplementary.
+
+% We consider both the quadratic and logistic regression objective functions with convex regularizer. Here we show the logistic regression design as follows:
+
+% % \begin{equation}
+% %   \begin{aligned}
+% %       f(x) &= \frac{1}{n} \sum_{i=1}^{n} \\
+% %       f_i(x) &= \log \left(1+\exp \left(-y w_{i}^{\top} x\right)\right)+ \frac{\lambda}{2} \sum_{j=1}^{d} x_{j}^{2},
+% %   \end{aligned}
+% % \end{equation}
+
+% \begin{equation}
+%     \begin{aligned}
+%         f(x) = \frac{1}{n} \sum_{i=1}^{n} \log \left(1+\exp \left(-y_i w_{i}^{\top} x_i\right)\right)+ \frac{\lambda}{2} \sum_{j=1}^{d} x_{j}^{2},
+%     \end{aligned}
+% \end{equation}
+
+% where $w_{i} \in \mathbb{R}^{d}$ is the learning weight. $x_i, y_i \in\{-1,1\}$ are the training datapoint and it's corresponding label stored in node $i$. $\lambda\in \{0.1, 0.01\}$ is the regularizer parameter. We attached the experimental results in the supplementary.
+
+% \section{Conclusion}
+
+% Unified algorithm and linear convergence proof. First attempt at bridging the gap between the 2 worlds of algorithms using unbiased compressors and error feedback algorithms using biased contractive compressors.
+
+% Recover and go beyond the state of the art,
+% %if we omit Nesterov acceleration, but only for DIANA with unbiased compressors
+
+% %in other words, EF-BV interpolates between EF21 (for biased compressors without random independent components) and DIANA (for unbiased compressors)
+
+% EF-BV strictly improves upon EF21, by exploiting the randomness properties of the compressors, captured by the two parameters $\eta$ and $\omega$ of our new class of compressors $\mathbb{C}(\eta,\omega)$ and the third parameter $\oma$ describing the resulting variance from the parallel compressors after aggregation, whereas EF21 only makes use of the contraction factor $1-\alpha = \eta^2+\omega$.
+% Future work: recover the rate of DIANA.
+% Future work: extensions to bidirectional compression, wherein  the model updates broadcast by the server to all workers are also compressed  \cite{tan19,liu20,phi20,gor20}, analysis in the merely convex and nonconvex settings, acceleration~\cite{li2020,li21}
+% %sto grad au lieu de grad == double finite sum structure
+% %extension de nos compresseurs au cadre decentralized.
+% %prox si pas le temps de le faire ici. PArikh and boyd et mon papier SIAM Rev.
+
+\bibliographystyle{icml2022}
+	\bibliography{biblio}
+
+\clearpage
+\onecolumn
+\appendix
+
+
+\section{Proof of Proposition~\ref{prop1}}
+
+We first calculate $\omega$. Let $x\in\mathbb{R}^d$.
+\begin{align*}
+\big\|\mathcal{C}(x)- \mathbb{E}[\mathcal{C}(x)]\big\|^2&=\sum_{i\in \mathcal{I}_d\backslash \{i_1,\ldots, i_{k+k'}\}} \left(\frac{k'}{d-k}\right)^2|x_i|^2
++ \sum_{j=k+1}^{k+k'} \left(\frac{d-k-k'}{d-k}\right)^2|x_{i_j}|^2.
+\end{align*}
+Therefore, by taking the expectation over the random indexes $i_{k+1},\ldots,i_{2k}$,
+\begin{align*}
+\Exp{\big\|\mathcal{C}(x)- \mathbb{E}[\mathcal{C}(x)]\big\|^2} &=\sum_{i\in \mathcal{I}_d\backslash \{i_1,\ldots, i_{k}\}}
+\left( \frac{d-k-k'}{d-k}\left(\frac{k'}{d-k}\right)^2 +\frac{k'}{d-k} \left(\frac{d-k-k'}{d-k}\right)^2
+\right)|x_i|^2\\
+&=\frac{k'(d-k-k')}{(d-k)^2}\sum_{i\in \mathcal{I}_d\backslash \{i_1,\ldots, i_{k}\}}  |x_i|^2.
+%&\leq \frac{d-2}{(d-1)d} \|x\|^2
+\end{align*}
+Moreover, since the $|x_{i_j}|$ are the largest elements of $|x|$, for every $j=1,\ldots,k$,
+\begin{equation*}
+|x_{i_j}|^2\geq \frac{1}{d-k}\sum_{i\in \mathcal{I}_d\backslash \{i_1,\ldots, i_{k}\}}  |x_i|^2,
+\end{equation*}
+so that
+\begin{equation*}
+\|x\|^2 = \sum_{i\in \mathcal{I}_d}  |x_i|^2 \geq \left(1+\frac{k}{d-k}\right) \sum_{i\in \mathcal{I}_d\backslash \{i_1,\ldots, i_{k}\}}  |x_i|^2.
+\end{equation*}
+Hence,
+\begin{align*}
+\Exp{\big\|\mathcal{C}(x)- \mathbb{E}[\mathcal{C}(x)]\big\|^2} &\leq
+\frac{k'(d-k-k')}{(d-k)^2}\frac{d-k}{d}\|x\|^2 = \frac{k'(d-k-k')}{(d-k)d}\|x\|^2.
+\end{align*}
+Then, let us calculate $\eta$.
+\begin{align*}
+\big\| \mathbb{E}[\mathcal{C}(x)]-x\big\|^2 &=\sum_{i\in \mathcal{I}_d\backslash \{i_1,\ldots, i_{k}\}} \left(\frac{d-k-k'}{d-k}\right)^2|x_i|^2\\
+&\leq  \frac{(d-k-k')^2}{(d-k)d}\|x\|^2.
+\end{align*}
+Thus, $\eta =\frac{d-k-k'}{\sqrt{(d-k)d}}$.
+
+\section{Proof of Proposition~\ref{prop2}}
+
+We first calculate $\omega$. Let $x\in\mathbb{R}^d$.
+\begin{align*}
+\big\|\mathcal{C}(x)- \mathbb{E}[\mathcal{C}(x)]\big\|^2&=\sum_{j\in\{j_1,\ldots,j_{k}\}}  \left(\frac{k'-k}{k}\right)^2|x_{i_j}|^2+
+\sum_{i\in  \{i_1,\ldots, i_{k'}\}\backslash \{i_{j_1},\ldots, i_{j_{k}}\}} |x_i|^2
+%+ \sum_{j=k+1}^{2k} \left(\frac{d-2k}{d-k}\right)^2|x_{i_j}|^2.
+\end{align*}
+Therefore, by taking the expectation over the random indexes $i_{j_1},\ldots,i_{j_{k}}$,
+\begin{align*}
+\Exp{\big\|\mathcal{C}(x)- \mathbb{E}[\mathcal{C}(x)]\big\|^2} &=\sum_{j=1}^{k'}
+\left( \frac{k}{k'}\left(\frac{k'-k}{k}\right)^2 +\frac{k'-k}{k'}\right)|x_{i_j}|^2\\
+&=\frac{k'-k}{k}\sum_{j=1}^{k'}
+|x_{i_j}|^2\\
+&\leq\frac{k'-k}{k}\|x\|^2
+\end{align*}
+Then, let us calculate $\eta$.
+\begin{align*}
+\big\| \mathbb{E}[\mathcal{C}(x)]-x\big\|^2 &=\sum_{i\in \mathcal{I}_d\backslash \{i_1,\ldots, i_{k'}\}} |x_i|^2\\
+&\leq  \frac{d-k'}{d}\|x\|^2.
+\end{align*}
+
+
+
+\section{Proof of Theorem~\ref{theo1}}
+
+
+We have the descent property \citep[Lemma 4]{ric21}, for every $k\geq 0$,
+\begin{align}
+f(x^{k+1}) -f^\star &\leq f(x^k)  -f^\star -\frac{\gamma}{2} \sqnorm{\nabla f(x^k)} +\frac{ \gamma }{2}\sqnorm{g^{k+1}-\nabla f(x^k)}+ \left(\frac{ L}{2}-\frac{1}{2\gamma}\right)\sqnorm{x^{k+1}-x^k}\label{eqgergg}\\
+&\leq (1-\gamma\mu) \big(f(x^k)  -f^\star\big)  +\frac{ \gamma }{2}\sqnorm{g^{k+1}-\nabla f(x^k)}+ \left(\frac{ L}{2}-\frac{1}{2\gamma}\right)\sqnorm{x^{k+1}-x^k}.\notag
+\end{align}
+Then, for every $k\geq 0$, conditionally on $x^k$, $h^k$ and $(h_i^k)_{i=1}^n$,
+\begin{align*}
+\Exp{\sqnorm{g^{k+1}-\nabla f(x^k)}} &=\Exp{\sqnorm{\frac{1}{n}\sum_{i=1}^n \Big(h_i^{k}-\nabla f_i(x^k) +\nu \mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big) \Big) }}\\
+&=\sqnorm{\frac{1}{n}\sum_{i=1}^n \Big(h_i^{k}-\nabla f_i(x^k) +\nu \Exp{\mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)} \Big)}\\
+&\quad+\nu^2\Exp{\sqnorm{\frac{1}{n}\sum_{i=1}^n \Big( \mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)-\Exp{ \mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big) } \Big) }}\\
+&\leq \sqnorm{\frac{1}{n}\sum_{i=1}^n \Big(h_i^{k}-\nabla f_i(x^k) +\nu \Exp{\mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)} \Big)}\\
+&\quad+\nu^2 \frac{\oma}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^k },
+\end{align*}
+where the last inequality follows from \eqref{eqbo}. In addition,
+\begin{align*}
+&\left\|\frac{1}{n}\sum_{i=1}^n \Big(h_i^{k}-\nabla f_i(x^k) +\nu \Exp{\mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)} \Big)\right\|\\
+&\quad \leq \left\|\frac{1}{n}\sum_{i=1}^n \Big(\nu\big(h_i^{k}-\nabla f_i(x^k)\big) +\nu \Exp{\mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)} \Big)\right\|\\
+&\quad\quad + (1-\nu)\left\|\frac{1}{n}\sum_{i=1}^n \big(h_i^{k}-\nabla f_i(x^k)\big)\right\|\\
+&\quad \leq \frac{\nu}{n}\sum_{i=1}^n\left\|h_i^{k}-\nabla f_i(x^k)+ \Exp{\mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)}\right\|\\
+&\quad\quad + \frac{1-\nu}{n}\sum_{i=1}^n \left\|h_i^{k}-\nabla f_i(x^k)\right\|\\
+%si on veut utiliser zeta, c'est juste avant cette derniere etape de  borner le dernier terme par la moyenne des norme
+&\quad \leq  \frac{\nu\eta}{n}\sum_{i=1}^n \left\|\nabla f_i(x^k)-h_i^{k}\right\|+ \frac{1-\nu}{n}\sum_{i=1}^n \left\|\nabla f_i(x^k)-h_i^{k}\right\|\\
+& \quad = \frac{1-\nu+\nu\eta}{n}\sum_{i=1}^n \left\|\nabla f_i(x^k)-h_i^{k}\right\|
+\end{align*}
+Therefore,
+\begin{align*}
+&\sqnorm{\frac{1}{n}\sum_{i=1}^n \Big(h_i^{k}-\nabla f_i(x^k) +\nu \Exp{\mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)} \Big)}\\
+& \quad \leq \frac{(1-\nu+\nu\eta)^2}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^{k}},
+\end{align*}
+and,
+conditionally on $x^k$, $h^k$ and $(h_i^k)_{i=1}^n$,
+\begin{align*}
+\Exp{\sqnorm{g^{k+1}-\nabla f(x^k)}} &\leq
+%\frac{(1-\nu+\nu\eta)^2+\nu^2\oma}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^{k}}\\
+%&=
+\left((1-\nu+\nu\eta)^2+\nu^2\oma\right)\frac{1}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^{k}}.
+\end{align*}
+
+Thus, for every $k\geq 0$, conditionally on $x^k$, $h^k$ and $(h_i^k)_{i=1}^n$,
+ \begin{align*}
+\Exp{f(x^{k+1}) -f^\star}
+&\leq (1-\gamma\mu) \big(f(x^k)  -f^\star \big)  +\frac{ \gamma }{2}\big((1-\nu+\nu\eta)^2+\nu^2\oma\big)\frac{1}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^{k}}\\
+&\quad+ \left(\frac{ L}{2}-\frac{1}{2\gamma}\right)\Exp{\sqnorm{x^{k+1}-x^k}}.
+\end{align*}
+% donc on peut optimiser directement nu ? Remarquer que par rapport à DIANA, coefficient meilleur mais gamma au lieu de gamma^2. Finalement dans le cas unbiased pareil, si on pose nu = 1/(1+omega_av) on a ce facteur dans nu et dans gamma, donc il est bien au carré. Dans l'analyse, mais l'algo reste different avec nu=1 dans DIANA mais pas ici, j'attenue plus le gradient, comme dans EF21.
+%autrement dit dans le cas unbiased, on a un algo intermediare : DIANA, EF21 et EF-BV ont lambda=1/(1+omega) mais DIANA a nu=1 et EF21 a nu=lambda=1/(1+omega) alors qu'on a nu = 1/(1+omega/n).
+
+
+
+Now, let us study the control variates $h_i^k$. Let $s>0$. Using the Peter--Paul inequality $\|a+b\|^2 \leq (1+s) \|a\|^2 + (1+s^{-1}) \|b\|^2$, for any vectors $a$ and $b$,
+we have, for every $k\geq 0$ and $i\in\mathcal{I}_n$,
+\begin{align*}
+\sqnorm{\nabla f_i(x^{k+1})-h_i^{k+1}}&=\sqnorm{h_i^{k}-\nabla f_i(x^{k+1}) +\lambda \mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)  }\\
+&\leq (1+s)\sqnorm{h_i^{k}-\nabla f_i(x^{k}) +\lambda \mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)  }
++(1+s^{-1})\sqnorm{\nabla f_i(x^{k+1})-\nabla f_i(x^{k})}\\
+&\leq (1+s)\sqnorm{h_i^{k}-\nabla f_i(x^{k}) +\lambda \mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)  }
++(1+s^{-1})L_i^2\sqnorm{x^{k+1}-x^{k}}.
+\end{align*}
+Moreover,  conditionally on $x^k$, $h^k$ and $(h_i^k)_{i=1}^n$,
+\begin{align*}
+&\Exp{\sqnorm{h_i^{k}-\nabla f_i(x^{k}) +\lambda \mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)  }}\\
+&\quad=\sqnorm{h_i^{k}-\nabla f_i(x^{k}) +\lambda \Exp{\mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)} }\\
+&\quad\quad+\lambda^2\Exp{\sqnorm{ \mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)-\Exp{ \mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big) }  }}\\
+&\quad\leq\sqnorm{h_i^{k}-\nabla f_i(x^{k}) +\lambda \Exp{\mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)} }\\
+&\quad\quad+\lambda^2\omega \sqnorm{\nabla f_i(x^k)-h_i^k}.
+\end{align*}
+In addition,
+ \begin{align*}
+\left\|h_i^{k}-\nabla f_i(x^{k}) +\lambda \Exp{\mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)}\right\|& \leq \left\|\lambda\big(h_i^{k}-\nabla f_i(x^{k})\big) +\lambda \Exp{\mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)}\right\|\notag\\
+&\quad + (1-\lambda)\left\|h_i^{k}-\nabla f_i(x^k)\right\|\\
+&\leq  \lambda\eta\left\|\nabla f_i(x^k)-h_i^{k}\right\|+ (1-\lambda)\left\|\nabla f_i(x^k)-h_i^{k}\right\|\notag\\
+&=(1-\lambda+\lambda\eta)\left\|\nabla f_i(x^k)-h_i^k\right\|.
+\end{align*}
+Therefore, conditionally on $x^k$, $h^k$ and $(h_i^k)_{i=1}^n$,
+\begin{align*}
+\Exp{\sqnorm{h_i^{k}-\nabla f_i(x^{k}) +\lambda \mathcal{C}_i^k\big(\nabla f_i(x^k)-h_i^k\big)  }}\leq\big((1-\lambda+\lambda\eta)^2+\lambda^2\omega\big) \sqnorm{\nabla f_i(x^k)-h_i^k}
+\end{align*}
+and
+\begin{align*}
+\Exp{\sqnorm{\nabla f_i(x^{k+1})-h_i^{k+1}}}\leq (1+s)\big((1-\lambda+\lambda\eta)^2+\lambda^2\omega\big) \sqnorm{\nabla f_i(x^{k})-h_i^{k}}
++(1+s^{-1})L_i^2\Exp
+{\sqnorm{x^{k+1}-x^{k}}},
+\end{align*}
+so that
+\begin{align*}
+\Exp{\frac{1}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^{k+1})-h_i^{k+1}}}&
+\leq (1+s)\big((1-\lambda+\lambda\eta)^2+\lambda^2\omega\big) \frac{1}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^{k}}\\
+&\quad+(1+s^{-1})\tilde{L}^2\Exp
+{\sqnorm{x^{k+1}-x^{k}}}.
+\end{align*}
+
+Let $\theta>0$; its value will be set to $\theta^\star$ later on. We introduce the Lyapunov function, for every $k\geq 0$,
+\begin{equation*}
+\Psi^k \eqdef f(x^k)-f^\star + \frac{\gamma}{2\theta}  \frac{1}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^{k}}.
+\end{equation*}
+Hence, for every $k\geq 0$, conditionally on $x^k$, $h^k$ and $(h_i^k)_{i=1}^n$, we have
+\begin{align}
+\Exp{\Psi^{k+1}} &\leq (1-\gamma\mu) \big(f(x^k)  -f^\star \big)\notag \\
+&\quad +\frac{ \gamma }{2\theta}\Big( \theta\big((1-\nu+\nu\eta)^2+\nu^2\oma\big)
++(1+s)\big((1-\lambda+\lambda\eta)^2+\lambda^2\omega\big)
+\Big) \frac{1}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^{k}}\label{eqq1}\\
+&\quad+ \left(\frac{ L}{2}-\frac{1}{2\gamma}+\frac{\gamma}{2\theta}(1+s^{-1})\tilde{L}^2\right)\!\Exp{\sqnorm{x^{k+1}-x^k}}.\notag
+\end{align}
+
+%As discussed in Sect.~\ref{secsca}, the factor $(1-\lambda+\lambda\eta)^2+\lambda^2\omega$ is minimized and is smaller than 1 if $\lambda=\lambda^\star$. Similarly, $(1-\nu+\nu\eta)^2+\nu^2\oma$ is minimized and is smaller than 1 if $\nu=\nu^\star$. So, let us assume that this is the case.
+
+%and we have $r_1<1$ (indeed, $\lambda\mapsto (1-\lambda+\lambda\eta)^2+\lambda^2\omega$ is a strictly convex quadratic function on $[0,1]$ with value $1$ and negative derivative $\eta-1$ in $\lambda=0$, so its minimum value on $[0,1]$, attained at $\lambda^\star\in (0,1]$, is $<1$).
+
+%$r_1$ corresponds to $1-\alpha$ in EF21.
+
+%Similarly, we set $r_2 = (1-\nu^\star+\nu^\star\eta)^2+{\nu^\star}^2\oma$ and we have $r_2<1$.
+
+%reprendre mon analyse qui disait que <1.
+
+Making use of $r$ and $r_{\mathrm{av}}$ and setting %$\theta =\theta^\star$,
+$\theta = s(1+s)\frac{r}{r_{\mathrm{av}}}$,
+we can rewrite \eqref{eqq1} as:
+\begin{align*}
+\Exp{\Psi^{k+1}} &\leq (1-\gamma\mu) \big(f(x^k)  -f^\star \big) +\frac{ \gamma }{2\theta}\Big( \theta r_{\mathrm{av}}
++(1+s)r
+\Big) \frac{1}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^{k}}\\
+&\quad+ \left(\frac{ L}{2}-\frac{1}{2\gamma}+\frac{\gamma}{2\theta}(1+s^{-1})\tilde{L}^2\right)\!\Exp{\sqnorm{x^{k+1}-x^k}}\\
+&=(1-\gamma\mu) \big(f(x^k)  -f^\star \big) +\frac{ \gamma }{2\theta} (1+s)^2
+ \frac{r}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^{k}}\\
+&\quad+ \left(\frac{ L}{2}-\frac{1}{2\gamma}+\frac{\gamma}{2s^2}\frac{r_{\mathrm{av}}}{r}\tilde{L}^2\right)\!\Exp{\sqnorm{x^{k+1}-x^k}}.
+\end{align*}
+We now choose $\gamma$ small enough so that
+ \begin{equation}
+L-\frac{1}{\gamma}+\frac{\gamma}{s^2}\frac{r_{\mathrm{av}}}{r}\tilde{L}^2 \leq 0.\label{eqgreg}
+\end{equation}
+A sufficient condition for \eqref{eqgreg} to hold is \citep[Lemma 5]{ric21}:
+\begin{equation}
+0<\gamma \leq \frac{1}{L+\tilde{L}\sqrt{\frac{r_{\mathrm{av}}}{r}}\frac{1}{s}}.\label{eqgamfek}
+\end{equation}
+Then, assuming that \eqref{eqgamfek} holds, we have, for every $k\geq 0$, conditionally on $x^k$, $h^k$ and $(h_i^k)_{i=1}^n$,
+\begin{align*}
+\Exp{\Psi^{k+1}} &\leq (1-\gamma\mu) \big(f(x^k)  -f^\star \big) +\frac{ \gamma }{2\theta} (1+s)^2
+ \frac{r}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^{k}}\\
+&\leq \max\big(1-\gamma\mu,(1+s)^2 r\big)  \Psi^k.
+\end{align*}
+
+
+%We set $\theta =s(1+s)\frac{r_1}{r_2}$. Then
+We see that $s$ must be small enough so that $(1+s)^2 r <1$; this is the case with
+$s=s^\star$, so that $(1+s^\star)^2 r = \frac{r+1}{2}<1$.
+%satisfied with $s = (1-r)/4$.
+%2(1-b) doit le faire, for some b>0, so that (1+s)^2 r_1 <= 1-b(1-r1)
+Therefore, we set $s=s^\star$, and, accordingly, $\theta=\theta^\star$. Then, for every $k\geq 0$,
+ conditionally on $x^k$, $h^k$ and $(h_i^k)_{i=1}^n$,
+\begin{align*}
+\Exp{\Psi^{k+1}}
+&\leq \max\big(1-\gamma\mu, {\textstyle\frac{r+1}{2}}\big) \Psi^k.
+\end{align*}
+Unrolling the recursion using the tower rule yields \eqref{eqsdgerg}.
+
+\section{Proof of Theorem~\ref{theo2}}
+
+
+Using $L$-smoothness of $f$, we have, for every $k\geq 0$,
+\begin{equation*}
+f(x^{k+1})\leq f(x^k) + \langle \nabla f(x^k),x^{k+1}-x^k\rangle + \frac{L}{2}\|x^{k+1}-x^k\|^2.
+\end{equation*}
+Moreover, using convexity of $R$, we have, for every subgradient $u^{k+1}\in \partial R(x^{k+1})$,
+\begin{equation}
+R(x^k)\geq R(x^{k+1}) + \langle u^{k+1}, x^{k}-x^{k+1}\rangle.\label{khfjehgg}
+\end{equation}
+From the property that $\mathrm{prox}_{\gamma R}=(\mathrm{Id}+\gamma \partial R)^{-1}$~\cite{bau17}, it follows from
+$x^{k+1} = \mathrm{prox}_{\gamma R}(x^k - \gamma  g^{k+1})$ that
+\begin{equation*}
+0\in  \partial R(x^{k+1})+ \frac{1}{\gamma}(x^{k+1} - x^k+\gamma g^{k+1}).
+\end{equation*}
+So, we set $u^{k+1}\eqdef \frac{1}{\gamma}(x^{k} - x^{k+1})-g^{k+1}$. Using this subgradient in \eqref{khfjehgg} and replacing
+$x^{k}-x^{k+1}$ by $\gamma(u^{k+1}+g^{k+1})$, we get, for every $k\geq 0$,
+\begin{align*}
+f(x^{k+1})+R(x^{k+1}) &\leq f(x^k) +R(x^k)  + \langle \nabla f(x^k)+u^{k+1},x^{k+1}-x^k\rangle + \frac{L}{2}\|x^{k+1}-x^k\|^2\\
+&=f(x^k) +R(x^k)  - \gamma \langle \nabla f(x^k)+u^{k+1},g^{k+1}+u^{k+1}\rangle + \frac{L}{2}\gamma^2\|g^{k+1}+u^{k+1}\|^2\\
+&=f(x^k) +R(x^k)  +\frac{ \gamma }{2}\|\nabla f(x^k)-g^{k+1}\|^2+ \left(\frac{\gamma^2 L}{2}-\frac{\gamma}{2}\right)\|g^{k+1}+u^{k+1}\|^2\\
+&\quad -\frac{\gamma}{2} \|\nabla f(x^k)+u^{k+1}\|^2\\
+&=f(x^k) +R(x^k)  +\frac{\gamma }{2}\|\nabla f(x^k)-g^{k+1}\|^2+ \left(\frac{ L}{2}-\frac{1}{2\gamma}\right)\|x^{k+1}-x^k\|^2\\
+&\quad -\frac{\gamma}{2} \|\nabla f(x^k)+u^{k+1}\|^2
+%&\leq f(x^k) +R(x^k)  +\frac{ \gamma }{2}G^k+ \left(\frac{ L}{2}-\frac{1}{2\gamma}\right)\|x^{k+1}-x^k\|^2\\
+%&\quad -\frac{\gamma}{2} \|\nabla f(x^k)+u^{k+1}\|^2.
+\end{align*}
+Note that we recover \eqref{eqgergg} if $R=0$ and $u^k \equiv 0$.
+
+Using the fact that for any vectors $a$ and $b$, $-\|a+b\|^2 \leq -\frac{1}{2} \|a\|^2 + \|b\|^2$, we have, for every $k\geq 0$,
+\begin{align*}
+-\frac{\gamma}{2} \|\nabla f(x^k)+u^{k+1}\|^2 &\leq -\frac{\gamma}{4} \|\nabla f(x^{k+1})+u^{k+1}\|^2 + \frac{\gamma}{2}  \|\nabla f(x^{k+1})-\nabla f(x^{k})\|^2\\
+&\leq -\frac{\gamma}{4} \|\nabla f(x^{k+1})+u^{k+1}\|^2 + \frac{\gamma L^2}{2}  \|x^{k+1}-x^k\|^2.
+\end{align*}
+Hence, for every $k\geq 0$,
+\begin{align*}
+f(x^{k+1})+R(x^{k+1})
+&\leq  f(x^k) +R(x^k)  +\frac{\gamma}{2}\|\nabla f(x^k)-g^{k+1}\|^2+ \left(\frac{ L}{2}-\frac{1}{2\gamma}+\frac{\gamma L^2}{2}\right)\|x^{k+1}-x^k\|^2\\
+&\quad -\frac{\gamma}{4} \|\nabla f(x^{k+1})+u^{k+1}\|^2.
+\end{align*}
+It follows from the KL assumption \eqref{eqKL} that
+\begin{align*}
+f(x^{k+1})+R(x^{k+1}) -f^\star - R^\star
+&\leq f(x^{k})+R(x^{k}) -f^\star - R^\star +\frac{\gamma}{2}\|\nabla f(x^k)-g^{k+1}\|^2\\
+&\quad + \left(\frac{ L}{2}-\frac{1}{2\gamma}+\frac{\gamma L^2}{2}\right)\|x^{k+1}-x^k\|^2
+-2\mu\frac{\gamma}{4}  \left(f(x^{k+1})+R(x^{k+1}) -f^\star - R^\star\right),
+\end{align*}
+so that
+\begin{align*}
+ \Big(1+\frac{\gamma\mu}{2}\Big)\left(f(x^{k+1})+R(x^{k+1}) -f^\star - R^\star\right)
+&\leq f(x^{k})+R(x^{k}) -f^\star - R^\star +\frac{\gamma}{2}\|\nabla f(x^k)-g^{k+1}\|^2\\
+&\quad+ \left(\frac{ L}{2}-\frac{1}{2\gamma}+\frac{\gamma L^2}{2}\right)\|x^{k+1}-x^k\|^2,
+\end{align*}
+and
+\begin{align*}
+f(x^{k+1})+R(x^{k+1}) -f^\star - R^\star
+&\leq \Big(1+\frac{\gamma\mu}{2}\Big)^{-1}\big(f(x^{k})+R(x^{k}) -f^\star - R^\star\big) +\frac{\gamma}{2}\|\nabla f(x^k)-g^{k+1}\|^2\\
+&\quad+ \left(\frac{ L}{2}-\frac{1}{2\gamma}+\frac{\gamma L^2}{2}\right)\|x^{k+1}-x^k\|^2.
+\end{align*}
+Let $s>0$. Like in the proof of Theorem~\ref{theo1}, we have
+\begin{align*}
+\Exp{\frac{1}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^{k+1})-h_i^{k+1}}}&
+\leq (1+s)\big((1-\lambda+\lambda\eta)^2+\lambda^2\omega\big) \frac{1}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^{k}}\\
+&\quad+(1+s^{-1})\tilde{L}^2\Exp
+{\sqnorm{x^{k+1}-x^{k}}}
+\end{align*}
+and
+\begin{align*}
+\Exp{\sqnorm{g^{k+1}-\nabla f(x^k)}} &\leq
+\left((1-\nu+\nu\eta)^2+\nu^2\oma\right)\frac{1}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^{k}}.
+\end{align*}
+We introduce the Lyapunov function, for every $k\geq 0$,
+\begin{align*}
+\Psi^k &\eqdef f(x^k)+R(x^k)-f^\star - R^\star + \frac{\gamma}{2\theta}  \frac{1}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^{k}},
+\end{align*}
+where
+$\theta = s(1+s)\frac{r}{r_{\mathrm{av}}}$.
+
+
+Following the  same derivations as
+ in the proof of Theorem~\ref{theo1}, we obtain that, for every $k\geq 0$, conditionally on $x^k$, $h^k$ and $(h_i^k)_{i=1}^n$,
+\begin{align*}
+\Exp{\Psi^{k+1}} &\leq \Big(1+\frac{\gamma\mu}{2}\Big)^{-1}\big(f(x^{k})+R(x^{k}) -f^\star - R^\star\big) \\
+&\quad +\frac{ \gamma }{2\theta}\Big( \theta\big((1-\nu+\nu\eta)^2+\nu^2\oma\big)
++(1+s)\big((1-\lambda+\lambda\eta)^2+\lambda^2\omega\big)
+\Big)\frac{1}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^{k})-h_i^{k}}\\
+&\quad+ \left(\frac{ L}{2}-\frac{1}{2\gamma}+\frac{\gamma L^2}{2}+\frac{\gamma}{2\theta}(1+s^{-1})\tilde{L}^2\right)\!\Exp{\sqnorm{x^{k+1}-x^k}}\\
+&= \Big(1+\frac{\gamma\mu}{2}\Big)^{-1}\big(f(x^{k})+R(x^{k}) -f^\star - R^\star\big) +\frac{ \gamma }{2\theta}\Big( \theta r_{\mathrm{av}}
++(1+s)r
+\Big)\frac{1}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^{k})-h_i^{k}}\\
+&\quad+ \left(\frac{ L}{2}-\frac{1}{2\gamma}+\frac{\gamma L^2}{2}+\frac{\gamma}{2\theta}(1+s^{-1})\tilde{L}^2\right)\!\Exp{\sqnorm{x^{k+1}-x^k}}\\
+&=\Big(1+\frac{\gamma\mu}{2}\Big)^{-1}\big(f(x^{k})+R(x^{k}) -f^\star - R^\star\big) +\frac{ \gamma }{2\theta} (1+s)^2
+\frac{r}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^{k})-h_i^{k}}\\
+&\quad+ \left(\frac{ L}{2}-\frac{1}{2\gamma}+\frac{\gamma L^2}{2}+\frac{\gamma}{2s^2}\frac{r_{\mathrm{av}}}{r}\tilde{L}^2\right)\!\Exp{\sqnorm{x^{k+1}-x^k}}.
+\end{align*}
+We now choose $\gamma$ small enough so that
+ \begin{equation*}
+L-\frac{1}{\gamma}+\gamma L^2+\frac{\gamma}{s^2}\frac{r_{\mathrm{av}}}{r}\tilde{L}^2 \leq 0.
+\end{equation*}
+If we assume $\gamma\leq \frac{1}{L}$, a sufficient condition is
+ \begin{equation}
+2L-\frac{1}{\gamma}+\frac{\gamma}{s^2}\frac{r_{\mathrm{av}}}{r}\tilde{L}^2 \leq 0.\label{eqgreg3}
+\end{equation}
+A sufficient condition for \eqref{eqgreg3} to hold is \citep[Lemma 5]{ric21}:
+\begin{equation}
+0<\gamma \leq \frac{1}{2L+\tilde{L}\sqrt{\frac{r_{\mathrm{av}}}{r}}\frac{1}{s}}.\label{eqgamfek2}
+\end{equation}
+Then, assuming that \eqref{eqgamfek2} holds, we have, for every $k\geq 0$, conditionally on $x^k$, $h^k$ and $(h_i^k)_{i=1}^n$,
+\begin{align*}
+\Exp{\Psi^{k+1}} &\leq \Big(1+\frac{\gamma\mu}{2}\Big)^{-1} \big(f(x^k)  +R(x^k)-f^\star-R^\star \big) +\frac{ \gamma }{2\theta} (1+s)^2
+ \frac{r}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^{k}}\\
+&\leq \max\Big({\textstyle\frac{1}{1+\frac{1}{2}\gamma\mu}},(1+s)^2 r\Big)  \Psi^k.
+\end{align*}
+We set $s=s^\star$ and, accordingly, $\theta=\theta^\star$, so that  $(1+s^\star)^2 r = \frac{r+1}{2}<1$. Then,
+for every $k\geq 0$, conditionally on $x^k$, $h^k$ and $(h_i^k)_{i=1}^n$,
+\begin{align*}
+\Exp{\Psi^{k+1}} &\leq \max\left({\frac{1}{1+\frac{1}{2}\gamma\mu}},\frac{r+1}{2}\right)  \Psi^k.
+\end{align*}
+Unrolling the recursion using the tower rule yields \eqref{eqsdgerg2}.
+
+\section{New Convergence Results for \DIANA}
+
+We suppose that the compressors $\mathcal{C}_i^k$ are in $\mathbb{C}(\eta,\omega)$, for some $\eta\in[0,1)$ and $\omega\geq 0$. We define $r$, $s^\star$, $\theta^\star$ like in Sect.~\ref{sec5}, as well as
+$r_{\mathrm{av}} \eqdef \eta^2+\oma$. % and $r$, $s^\star$, $\theta^\star$ as previously:
+
+Viewing \DIANA as \EFBV with $\nu=1$, we obtain, as corollaries of Theorems \ref{theo1} and \ref{theo2}:
+
+\begin{theorem}\label{coro1}Suppose that $R=0$ and $f$ satisfies the PL condition with some constant  $\mu>0$.
+In \DIANA, suppose that $\lambda \in (0,1]$ is such that $r<1$, and
+%(this is the case if $\lambda=\lambda^*)$.
+%$\lambda=\lambda^\star$, $\nu=\nu^\star$, and
+\begin{equation*}
+0<\gamma \leq \frac{1}{L+\tilde{L}\sqrt{\frac{r_{\mathrm{av}}}{r}}\frac{1}{s^\star}}.
+\end{equation*}
+For every $k\geq 0$, define the Lyapunov function
+\begin{equation*}
+\Psi^k \eqdef f(x^k)-f^\star + \frac{\gamma}{2\theta^\star}  \frac{1}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^{k}}.
+\end{equation*}
+where $f^\star \eqdef f(x^\star)$, for any minimizer $x^\star$ of $f$.
+
+Then, for every $k\geq 0$,
+\begin{align*}
+\Exp{\Psi^{k}}
+&\leq \left(\max\left(1-\gamma\mu, {\frac{r+1}{2}}\right) \right)^k\Psi^0.
+\end{align*}
+\end{theorem}
+
+
+
+\begin{theorem}\label{coro2}
+Suppose that $f+R$ satisfies the  the KL condition with some constant $\mu>0$.
+%In \EFBV, suppose that $\lambda=\lambda^\star$, $\nu=\nu^\star$, and
+In \DIANA, suppose that $\lambda \in (0,1]$ is such that $r<1$, and
+\begin{equation*}
+0<\gamma \leq \frac{1}{2L+\tilde{L}\sqrt{\frac{r_{\mathrm{av}}}{r}}\frac{1}{s^\star}}.
+\end{equation*}
+For every $k\geq 0$, define the Lyapunov function
+\begin{align*}
+\Psi^k &\eqdef f(x^k)+R(x^k)-f^\star - R^\star \\
+&\quad + \frac{\gamma}{2\theta^\star}  \frac{1}{n}\sum_{i=1}^n \sqnorm{\nabla f_i(x^k)-h_i^{k}},
+\end{align*}
+where $f^\star \eqdef f(x^\star)$ and $R^\star \eqdef R(x^\star)$, for any minimizer $x^\star$ of $f+R$.
+Then, for every $k\geq 0$,
+\begin{align*}
+\Exp{\Psi^{k}}  &\leq \left(\max\left({\frac{1}{1+\frac{1}{2}\gamma\mu}},\frac{r+1}{2}\right)\right)^k\Psi^0.
+\end{align*}
+\end{theorem}
+
+
+
+\newpage
+%\cleardoublepage
+% \section{Comprehensive Experiments with Logistic Regression}
+\section{Experiments}
+
+We conduct comprehensive experiments to illustrate the efficiency of our proposed algorithm \EFBV, compared to \EFOR (we use biased compressors, so we don't include \DIANA in the comparison).
+
+\subsection{Datasets and Experimental Setup}
+
+We consider the heterogeneous data distributed regime, which means that all parallel nodes store different data points, but use the same type of learning function. We adopt the datasets from LibSVM~\cite{chang2011libsvm} and  we split them, after random shuffling, into $n\in\{1000, N\}$ pieces, where $N$ is the total number of data points (the left-out data points from the integer division of $N$ by $n$ are stored at the last node). The corresponding values are shown in Tab.~\ref{tab:logistic_datasets}. We can note that when $n=N$, there is only one data point at every node.
+To make our  setting more realistic, we consider that different nodes partially share some data:
+we set the overlapping ratio to be $\xi\in\{1, 2\}$, where $\xi=1$ means no overlapping and $\xi=2$ means that the data is partially shared among the nodes, with a redundancy factor of 2; this is achieved by  sequentially assigning 2 pieces of data at every node.
+The experiments were conducted using 24 NVIDIA-A100-80G GPUs, each with  %For each GPU, we allocated
+80GB memory.
+
+\begin{table}[!htbp]
+ \caption{Summary of the datasets and splitting of the data among clients, when $\xi=1$.}
+    \label{tab:logistic_datasets}
+    \centering
+    \begin{tabular}{c|c|c|c}
+        \toprule
+        \multirow{2}{*}{Dataset} & \multirow{2}{*}{$N$ (total \# of datapoints)} & \multirow{2}{*}{$d$ (\# of features)} & $N_i$ (\# of datapoints per client)\\
+        ~ & ~ &~ & $n = 1000 \ |\ N$\\\hline
+        \multirow{1}{*}{\texttt{mushrooms}} & \multirow{1}{*}{8,124} & \multirow{1}{*}{112} & $8 \ |\ 1$\\ \hline
+        \multirow{1}{*}{\texttt{phishing}} & \multirow{1}{*}{11,055} & \multirow{1}{*}{68} & $11 \ |\ 1$\\ \hline
+        \multirow{1}{*}{\texttt{a9a}} & \multirow{1}{*}{32,561} & \multirow{1}{*}{123} & $32 \ |\ 1$\\ \hline
+        \multirow{1}{*}{\texttt{w8a}} & \multirow{1}{*}{49,749} & \multirow{1}{*}{300} & $49 \ |\ 1$\\
+        \bottomrule
+    \end{tabular}
+   \end{table}
+
+%We first equally split all data into $n$ nodes. The left-out data points are stored in the last node. We note that for $N$, which is an extreme scenario, we sample one data point at every node. The overlapping rate $\xi$ is selected in $\{1, 2\}$. For example, $\xi$ equals $2$ means that we sequentially
+%select 2 partitions to save at every node. %Considering some amount of overlapping is a more realistic scenario.
+
+We consider logistic regression, which consists in minimizing the $\mu$-strongly convex function
+\begin{equation*}
+f=\frac{1}{n} \sum_{i=1}^{n}f_i,
+\end{equation*}
+with, for every $i\in\mathcal{I}_n$,
+\begin{equation*}
+        f_i(x) =\frac{1}{N_i} \sum_{j=1}^{N_i} \log\!\Big(1+\exp\!\left(-b_{i,j} x^{\top} a_{i,j}\right)\Big)+ \frac{\mu}{2} \|x\|^2,
+    \end{equation*}
+where $\mu\in \{0.1, 0.01\}$ is the strong convexity constant; $N_i$ is the number of data points at node $i$; the $a_{i,j}$ are the training vectors and the $b_{i,j} \in\{-1,1\}$ the corresponding labels.
+%where $w_{i} \in \mathbb{R}^{d}$ is the learning weight. $x_i, y_i \in\{-1,1\}$ are the training datapoint and it's corresponding label stored in node $i$.
+%$\lambda\in \{0.1, 0.01\}$ is the regularizer parameter.
+Note that there is no regularizer in this problem; that is, $R=0$.
+
+For simplicity, we set $L=\tilde{L}=L_{\max}=\max_i \max_j\|a_{i,j}\|+\mu$.
+
+We use independent compressors of type \texttt{comp-}$(k,k')$ at every node, for some small $k$ and large $k'<d$. These compressors are biased ($\eta>0$) and have a variance $\omega>1$, so they are not contractive: they don't belong to $\mathbb{B}(\alpha)$ for any $\alpha$. We have $\oma=\frac{\omega}{n}$.
+
+Thus, we place ourselves in the conditions of Theorem~\ref{theo1}, and we compare \EFBV with
+\begin{equation*}
+\lambda=\lambda^\star,\quad \nu=\nu^\star,\quad \gamma=\frac{1}{L+\tilde{L}\sqrt{\frac{r_{\mathrm{av}}}{r}}\frac{1}{s^\star}}
+\end{equation*}
+to \EFOR, which corresponds to the particular case of \EFBV with
+\begin{equation*}
+\nu = \lambda=\lambda^\star,\quad \gamma=\frac{1}{L+\tilde{L}\frac{1}{s^\star}}.
+\end{equation*}
+
+% \subsection{Datasets and Splits}
+% We first present the splits of applied datasets in our experiments. We consider the number of node $n$ to be selected from $\{1000, N\}$.
+
+%Our experiments are applying logistic regression function with convex regularizer and using comp-(k', k) compressor with different $k$ and $k'$.  We conducted comprehensive experiments to validate the efficiency of our proposed EF-BV over EF21~\cite{ric21}. We conducted all experiments on 24 NVIDIA-A100-80G GPUs. For each GPU, we allocated 80G memory.
+
+
+
+%\cleardoublepage
+%\newpage
+\subsection{Comparisons on the Number of Distributed Nodes}
+Here we consider the influence of the number of distributed nodes. We choose $n\in \{1000, N\}$ using different compressors including CompK ($K'=\sqrt{d}$) and CompK ($K'=d/2$).
+
+\begin{figure*}[!htbp]
+	\centering
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_mushrooms/CompK_10_1_mushrooms_20workers_3000K_1000_mushrooms_1_1_logreg_diff.pdf}
+		\caption{mushrooms}\label{fig:0003_1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_phishing/CompK_8_1_phishing_20workers_3000K_1000_phishing_1_1_logreg_diff.pdf}
+		\caption{phishing}\label{fig:0003_2}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_a9a/CompK_11_1_a9a_20workers_3000K_1000_a9a_1_1_logreg_diff.pdf}
+		\caption{a9a}\label{fig:0003_3}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_w8a/CompK_18_1_w8a_20workers_3000K_1000_w8a_1_1_logreg_diff.pdf}
+		\caption{w8a}\label{fig:0003_4}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_mushrooms/CompK_10_1_mushrooms_20workers_3000K_8124_mushrooms_1_1_logreg_diff.pdf}
+		\caption{mushrooms}\label{fig:0003_5}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{phishing}\label{fig:0003_6}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{a9a}\label{fig:0003_7}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{w8a}\label{fig:0003_8}
+	\end{subfigure}
+
+	\caption{TODO - Comparisons on the number of distributed nodes $n$. The top row shows the results with $n=1000$ while the bottom part presents the cases with $n=N$. We use comp-(k', k) for fair Comparisons between EF21 and EF-BV. Here we choose $k'=\sqrt{d}, k=1$.}\label{fig:0003}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+	\centering
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_mushrooms/CompK_56_1_mushrooms_20workers_3000K_1000_mushrooms_1_1_logreg_diff.pdf}
+		\caption{mushrooms}\label{fig:0004_1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_phishing/CompK_34_1_phishing_20workers_3000K_1000_phishing_1_1_logreg_diff.pdf}
+		\caption{phishing}\label{fig:0004_2}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_a9a/CompK_61_1_a9a_20workers_3000K_1000_a9a_1_1_logreg_diff.pdf}
+		\caption{a9a}\label{fig:0004_3}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_w8a/CompK_150_1_w8a_20workers_3000K_1000_w8a_1_1_logreg_diff.pdf}
+		\caption{w8a}\label{fig:0004_4}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_mushrooms/CompK_56_1_mushrooms_20workers_3000K_8124_mushrooms_1_1_logreg_diff.pdf}
+		\caption{mushrooms}\label{fig:0004_5}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{phishing}\label{fig:0004_6}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{a9a}\label{fig:0004_7}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{w8a}\label{fig:0004_8}
+	\end{subfigure}
+	\caption{TODO - Comparisons on the number of distributed nodes $n$ with comp-(d/2, 1). Top row is $n=1000$ while the bottom part is $n=N$.}\label{fig:0004}
+\end{figure*}
+
+
+\begin{figure*}[!htbp]
+	\centering
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_mushrooms/CompK_10_1_mushrooms_20workers_3000K_1000_mushrooms_1_2_logreg_diff.pdf}
+		\caption{mushrooms}\label{fig:0005_1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{phishing}\label{fig:0005_2}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{a9a}\label{fig:0005_3}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{w8a}\label{fig:0005_4}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{mushrooms}\label{fig:0005_5}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{phishing}\label{fig:0005_6}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{a9a}\label{fig:0005_7}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{w8a}\label{fig:0005_8}
+	\end{subfigure}
+	\caption{TODO - Comparisons on the number of distributed nodes $n$ with comp-($\sqrt{d}$, 2). Top row is $n=1000$ while the bottom part is $n=N$.}\label{fig:0005}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+	\centering
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_mushrooms/CompK_56_1_mushrooms_20workers_3000K_1000_mushrooms_1_2_logreg_diff.pdf}
+		\caption{mushrooms}\label{fig:0006_1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{phishing}\label{fig:0006_2}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{a9a}\label{fig:0006_3}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{w8a}\label{fig:0006_4}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{mushrooms}\label{fig:0006_5}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{phishing}\label{fig:0006_6}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/example.pdf}
+		\caption{a9a}\label{fig:0006_7}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_w8a/CompK_150_2_w8a_20workers_3000K_1000_w8a_1_2_logreg_diff.pdf}
+		\caption{w8a}\label{fig:0006_8}
+	\end{subfigure}
+	\caption{TODO - Comparisons on the number of distributed nodes $n$ with comp-(d/2, 2). Top row is $n=1000$ while the bottom part is $n=N$.}\label{fig:0006}
+\end{figure*}
+
+According to comparative analysis, we show that our proposed EF-BV converges faster than EF21. Our improvements over EF21 are consistently more significant when the distributed node $n$ increases or k' or k in comp-(k', k) is bigger. The reason is that the saved factor $\sqrt{{r_{av}}/{r}}$ will be smaller, which leads to a larger stepsize of EF-BV compared to EF21. We also experimentally prove EF-BV has a linear convergence rate.
+
+
+\subsection{Overlapping Analysis}
+We consider the datapoints distributed into different nodes has the characterics of overlapping. Suppose dataset $\mathcal{X}$ is randomly splitted into $n$ splits, denoted as ${q_1, q_2, \cdots, q_n}$. Given the overlapping rate $\xi$, node $i \in [1, n]$ will store the partitions $\{q_{i\%n}, q_{(i+1)\%n}, q_{(i+\xi-1)\%n}\}$. In our practice, we choose $\xi \in {1, 2}$. $\xi =1$ means there is no shared data among different nodes. $\xi=2$ means partial data will shared among nodes. This can be easily generalized to larger $\xi$ but we found $\xi=2$ can clearly show the difference compared with the setting without overlapping.
+
+\begin{figure*}[!htbp]
+	\centering
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_mushrooms/CompK_10_1_mushrooms_20workers_3000K_1000_mushrooms_1_1_logreg_diff.pdf}
+		\caption{mushrooms, n=1000, k'=$\sqrt{d}$}\label{fig:0007_1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_phishing/CompK_8_1_phishing_20workers_3000K_1000_phishing_1_1_logreg_diff.pdf}
+		\caption{phishing, n=1000, k'=$\sqrt{d}$}\label{fig:0007_2}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_a9a/CompK_11_1_a9a_20workers_3000K_1000_a9a_1_1_logreg_diff.pdf}
+		\caption{a9a, n=1000, k'=$\sqrt{d}$}\label{fig:0007_3}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_w8a/CompK_18_1_w8a_20workers_3000K_1000_w8a_1_1_logreg_diff.pdf}
+		\caption{w8a, n=1000, k'=$\sqrt{d}$}\label{fig:0007_4}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_mushrooms/CompK_10_1_mushrooms_20workers_3000K_1000_mushrooms_1_2_logreg_diff.pdf}
+		\caption{mushrooms, n=1000, k'=$\sqrt{d}$}\label{fig:0007_5}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_phishing/CompK_8_1_phishing_20workers_3000K_1000_phishing_1_2_logreg_diff.pdf}
+		\caption{phishing, n=1000, k'=$\sqrt{d}$}\label{fig:0007_6}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_a9a/CompK_11_1_a9a_20workers_3000K_1000_a9a_1_2_logreg_diff.pdf}
+		\caption{a9a, n=1000, k'=$\sqrt{d}$}\label{fig:0007_7}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_w8a/CompK_18_1_w8a_20workers_3000K_1000_w8a_1_2_logreg_diff.pdf}
+		\caption{w8a, n=1000, k'=$\sqrt{d}$}\label{fig:0007_8}
+	\end{subfigure}
+	\caption{Comparisons on the number of distributed nodes $n$ with comp-($\sqrt{d}$, 2). Top row is $n=1000$ while the bottom part is $n=N$.}\label{fig:0007}
+\end{figure*}
+
+\begin{figure*}[!htbp]
+	\centering
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_mushrooms/CompK_56_1_mushrooms_20workers_3000K_1000_mushrooms_1_1_logreg_diff.pdf}
+		\caption{mushrooms, n=1000, k'=$d/2$}\label{fig:0008_1}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_phishing/CompK_34_1_phishing_20workers_3000K_1000_phishing_1_1_logreg_diff.pdf}
+		\caption{phishing, n=1000, k'=$d/2$}\label{fig:0008_2}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_a9a/CompK_61_1_a9a_20workers_3000K_1000_a9a_1_1_logreg_diff.pdf}
+		\caption{a9a, n=1000, k'=$d/2$}\label{fig:0008_3}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_w8a/CompK_150_1_w8a_20workers_3000K_1000_w8a_1_1_logreg_diff.pdf}
+		\caption{w8a, n=1000, k'=$d/2$}\label{fig:0008_4}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_mushrooms/CompK_56_1_mushrooms_20workers_3000K_1000_mushrooms_1_2_logreg_diff.pdf}
+		\caption{mushrooms, n=1000, k'=$d/2$}\label{fig:0008_5}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_phishing/CompK_34_1_phishing_20workers_3000K_1000_phishing_1_2_logreg_diff.pdf}
+		\caption{phishing, n=1000, k'=$d/2$}\label{fig:0008_6}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_a9a/CompK_61_1_a9a_20workers_3000K_1000_a9a_1_2_logreg_diff.pdf}
+		\caption{a9a, n=1000, k'=$d/2$}\label{fig:0008_7}
+	\end{subfigure}
+	\begin{subfigure}[b]{0.24\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{img/plot_w8a/CompK_150_1_w8a_20workers_3000K_1000_w8a_1_2_logreg_diff.pdf}
+		\caption{w8a, n=1000, k'=$d/2$}\label{fig:0008_8}
+	\end{subfigure}
+	\caption{Comparisons on the number of distributed nodes $n$ with comp-(d/2, 2). Top row is $n=1000$ while the bottom part is $n=N$.}\label{fig:0007}
+\end{figure*}
+
+
+
+% \subsection{Stepsize Tolerence}
+% We first evaluate the tolerence/robustness of our method EF-BV compared to EF21 both using the Comp-K compressor. We also consider $K'$ in the Top-K' selection to be $\sqrt{d}$ and $d/2$. We show both EF-BV and EF21 is tolerant with larger batch size. However, we show EF-BV has larger learning rate than EF21.
+
+
+% \begin{figure*}[!htbp]
+% 	\centering
+% 	\begin{subfigure}[b]{0.3\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{EF21.}\label{fig:0001_1}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}[b]{0.3\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{EF-BV.}\label{fig:0001_2}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}[b]{0.3\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{EF-BV compared with EF21.}\label{fig:0001_3}
+% 	\end{subfigure}
+% 	   \caption{TODO - Stepsize tolerence analysis. CompK-$\sqrt{d}$, mushrooms, n=1000.}\label{fig:0001}
+% \end{figure*}
+
+% \begin{figure*}[!htbp]
+% 	\centering
+% 	\begin{subfigure}[b]{0.3\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{EF21.}\label{fig:0002_1}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}[b]{0.3\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{EF-BV.}\label{fig:0002_2}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}[b]{0.3\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{EF-BV compared with EF21.}\label{fig:0002_3}
+% 	\end{subfigure}
+% 	   \caption{TODO - Stepsize tolerence analysis. CompK-$\frac{d}{2}$, mushrooms, n=1000.}\label{fig:0002}
+% \end{figure*}
+% % ===============================================================
+% % ===============================================================
+% \newpage
+% \cleardoublepage
+% \section{Experiments on Quadratic Function with Convex Regularizer}
+% \subsection{Objective Function}
+% Here we consider the following quadratic function with convex regularizer.
+% \begin{equation}
+% 	\begin{aligned}
+% 		f(x) = \frac{1}{n} \sum_{i=1}^{n}\left(w_{i}^{\top} x_i-y_{i}\right)^{2}+ \frac{\lambda}{2} \sum_{j=1}^{d} x_{j}^{2},
+% 	\end{aligned}
+% \end{equation}
+
+% where $w_{i} \in \mathbb{R}^{d}$ is the learning weight. $x_i, y_i \in\{-1,1\}$ are the training datapoint and it's corresponding label stored in node $i$. $\lambda = 0.1$ is the regularizer parameter.
+
+% \kai{We may consider remove some analysis.}
+
+% Here we conducted comprehensive experiments to valid the efficiency of our proposed EF-BV.
+
+% \subsection{Stepsize Tolerence}
+% We first evaluate the tolerence/robustness of our method EF-BV compared to EF21 both using the Comp-K compressor. We also consider $K'$ in the Top-K' selection to be $\sqrt{d}$ and $d/2$. We show both EF-BV and EF21 is tolerant with larger batch size. However, we show EF-BV has larger learning rate than EF21.
+
+
+% \begin{figure*}[!htbp]
+% 	\centering
+% 	\begin{subfigure}[b]{0.3\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{EF21.}\label{fig:0001_1}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}[b]{0.3\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{EF-BV.}\label{fig:0001_2}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}[b]{0.3\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{EF-BV compared with EF21.}\label{fig:0001_3}
+% 	\end{subfigure}
+% 	   \caption{TODO - Stepsize tolerence analysis. CompK-$\sqrt{d}$, mushrooms, n=1000.}\label{fig:0001}
+% \end{figure*}
+
+% \begin{figure*}[!htbp]
+% 	\centering
+% 	\begin{subfigure}[b]{0.3\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{EF21.}\label{fig:0002_1}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}[b]{0.3\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{EF-BV.}\label{fig:0002_2}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}[b]{0.3\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{EF-BV compared with EF21.}\label{fig:0002_3}
+% 	\end{subfigure}
+% 	   \caption{TODO - Stepsize tolerence analysis. CompK-$\frac{d}{2}$, mushrooms, n=1000.}\label{fig:0002}
+% \end{figure*}
+
+
+
+% \subsection{Comparisons  on the Number of Distributed Nodes}
+% Here we consider the influence of the number of distributed nodes. We choose $n\in \{20, 100, 1000, N\}$ using different compressors including MixK, CompK ($K'=\sqrt{d}$) and CompK ($K'=d/2$). We consider the original learning rate as well as the scaled stepsize by factor 8.
+
+% \begin{figure*}[!htbp]
+% 	\centering
+% 	\begin{subfigure}[b]{0.24\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{n=20}\label{fig:0003_1}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}[b]{0.24\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{$n=100$}\label{fig:0003_2}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}[b]{0.24\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{$n=1000$}\label{fig:0003_3}
+% 	\end{subfigure}
+% 	\begin{subfigure}[b]{0.24\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{$n=N\}$}\label{fig:0003_4}
+% 	\end{subfigure}
+% 	   \caption{TODO - MixK comparisons with $n\in \{20, 100, 1000, N\}$. CompK-$\frac{d}{2}$, mushrooms, n=1000.}\label{fig:0003}
+% \end{figure*}
+
+
+% \begin{figure*}[!htbp]
+% 	\centering
+% 	\begin{subfigure}[b]{0.24\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{n=20}\label{fig:0004_1}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}[b]{0.24\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{$n=100$}\label{fig:0004_2}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}[b]{0.24\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{$n=1000$}\label{fig:0004_3}
+% 	\end{subfigure}
+% 	\begin{subfigure}[b]{0.24\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{$n=N\}$}\label{fig:0004_4}
+% 	\end{subfigure}
+% 	   \caption{TODO - CompK ($K'=\sqrt{d}$) comparisons with $n\in \{20, 100, 1000, N\}$. CompK-$\frac{d}{2}$, mushrooms, n=1000.}\label{fig:0004}
+% \end{figure*}
+
+% \begin{figure*}[!htbp]
+% 	\centering
+% 	\begin{subfigure}[b]{0.24\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{n=20}\label{fig:0005_1}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}[b]{0.24\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{$n=100$}\label{fig:0005_2}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}[b]{0.24\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{$n=1000$}\label{fig:0005_3}
+% 	\end{subfigure}
+% 	\begin{subfigure}[b]{0.24\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{$n=N\}$}\label{fig:0005_4}
+% 	\end{subfigure}
+% 	   \caption{TODO - CompK ($K'=d/2$) comparisons with $n\in \{20, 100, 1000, N\}$. CompK-$\frac{d}{2}$, mushrooms, n=1000.}\label{fig:0005}
+% \end{figure*}
+
+% Our results consistently prove EF-BV can learn much better than EF21, especially when $n$ is large. The reason is because when $n$ is larger, the saved factor $\sqrt{{r_{av}}/{r}}$ will be smaller, which leads to larger stepsize of EF-BV compared to EF21.
+
+
+% \subsection{Overlapping Analysis}
+% We consider the datapoints distributed into different nodes has the characterics of overlapping. Here we show the results as follows.
+
+% \begin{figure*}[!htbp]
+% 	\centering
+% 	\begin{subfigure}[b]{0.24\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{n=20}\label{fig:0003_1}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}[b]{0.24\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{$n=100$}\label{fig:0003_2}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}[b]{0.24\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{$n=1000$}\label{fig:0003_3}
+% 	\end{subfigure}
+% 	\begin{subfigure}[b]{0.24\textwidth}
+% 		\centering
+% 		\includegraphics[width=\textwidth]{img/example.pdf}
+% 		\caption{$n=N\}$}\label{fig:0003_4}
+% 	\end{subfigure}
+% 	   \caption{TODO - MixK comparisons with $n\in \{20, 100, 1000, N\}$. CompK-$\frac{d}{2}$, mushrooms, n=1000.}\label{fig:0003}
+% \end{figure*}
+
+
+\end{document}
+
+
+TODO
+* Experiments -> Appendix
+N top k + quantization on the rest of coordinates
+
+N table avec convergence rates des 3 algos
+N Jensen pour montrer que B(alpha) incluse dans ,,, Jensen: ||E[C(x)-x||^2 <= E ||C(x)-x||^2 donc si dans alpha class, vrai pour eta = 1-alpha (?)
+N dire que EF-BV n'a d'interet que si les compresseurs ne sont pas unbiased (sinon just use DIANA) et ne sont pas biased contractive (sinon just use EF21).
+N dire que EF21 est EF-BV with lambda=nu=1. Mais On peut generaliser a EF-BV avec lambda=nu par l'idee non triviale du scaling: il est nouveau qu'il existe lambda tq lambda.C avec C dans la nouvelle classe est dans B(alpha).
+
+N rand-k better than top-k because omega_av = omega/n
+-> donner le taux de convergence de EF21, de DIANA et de EF-BV avec rand-k.
+-> A sparsite k du compresseur fixé, la combinaison algo + compresseurs qui offre le meilleur taux connu est DIANA + rand_k. Mais on sait qu'en pratique, effet highly nonlinear qui font que top-k est souvent plus performant en pratique, ce qui est intuitif car capture plus de l'energie du gradient dans sa version compressee.
+
+N rand k first + top-k -> je ne sais pas calculer eta et omega
+N ecrire sous forme de lemmas ? lemma: everything that is contractive belongs to our class. lemma: everything unbiased is in our class
+X contractivity does not capture finely the properties of compressors. By contrast, eta and omega have enough info and allow finer control.
+X stress differences between dealing with unbiased and biased
+X we recover the best theory of EF21
+X new class of compressors:  why needed and why enough info in eta and omega.
+X stress that our class includes things which are not contractive if eta^2+omega >1 to say that strictly larger
+
+ * omega_i instead of omega?
