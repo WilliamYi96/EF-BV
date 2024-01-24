@@ -91,7 +91,10 @@ python bdfg_distributed_stable_rand_k_dep.py --k 1 --dataset mushrooms --max_it 
 
 
 ## Reproduce CIFAR10 Image Classification
+```
 python EF21_100K.py --factor 8 --max_it 4545 --k 1320000 --batch_size 128 --model vgg11 --dataset CIFAR10
+```
+
 
 
 ## Citation
