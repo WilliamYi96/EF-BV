@@ -16,6 +16,7 @@ python generate_data_overlap.py --num_workers 20|50 --times 1|2|3|5|20|50
 
 ## Reproduce Appendix. A3
 ### mushrooms
+```
 python bdfg_distributed_stable.py --k 1 --dataset mushrooms --max_it 10000 --tol 1e-7 --factor 1 --num_workers 20
 
 python bdfg_distributed_stable.py --k 1 --dataset mushrooms --max_it 10000 --tol 1e-7 --factor 4 --num_workers 20
@@ -25,10 +26,13 @@ python bdfg_distributed_stable.py --k 1 --dataset mushrooms --max_it 10000 --tol
 python bdfg_distributed_stable.py --k 1 --dataset mushrooms --max_it 10000 --tol 1e-7 --factor 512 --num_workers 20
 
 python bdfg_distributed_stable.py --k 1 --dataset mushrooms --max_it 10000 --tol 1e-7 --factor 1024 --num_workers 20
+```
+
 
 ## Reproduce 5.2 - Logistic Regression
 
 ### mushrooms
+```
 python bdfg_distributed_stable.py --k 1 --dataset mushrooms --max_it 10000 --tol 1e-7 --factor 1 --num_workers 20
 
 python bdfg_distributed_stable.py --k 1 --dataset mushrooms --max_it 10000 --tol 1e-7 --factor 2 --num_workers 20
@@ -44,8 +48,11 @@ python bdfg_distributed_stable.py --k 1 --dataset mushrooms --max_it 10000 --tol
 python bdfg_distributed_stable.py --k 1 --dataset mushrooms --max_it 10000 --tol 1e-7 --factor 64 --num_workers 20
 
 python bdfg_distributed_stable.py --k 1 --dataset mushrooms --max_it 10000 --tol 1e-7 --factor 128 --num_workers 20
+```
+
 
 ### w8a
+```
 python bdfg_distributed_stable.py --k 1 --dataset w8a --max_it 10000 --tol 1e-7 --factor 1 --num_workers 20
 
 python bdfg_distributed_stable.py --k 1 --dataset w8a --max_it 10000 --tol 1e-7 --factor 8 --num_workers 20
@@ -57,8 +64,11 @@ python bdfg_distributed_stable.py --k 1 --dataset w8a --max_it 10000 --tol 1e-7 
 python bdfg_distributed_stable.py --k 1 --dataset w8a --max_it 10000 --tol 1e-7 --factor 64 --num_workers 20
 
 python bdfg_distributed_stable.py --k 1 --dataset w8a --max_it 10000 --tol 1e-7 --factor 128 --num_workers 20
+```
+
 
 ### Rand-K
+```
 python bdfg_distributed_stable_rand_k.py --k 1 --dataset mushrooms --max_it 10000 --tol 1e-7 --factor 1 --num_workers 20
 python bdfg_distributed_stable_rand_k.py --k 1 --dataset mushrooms --max_it 10000 --tol 1e-7 --factor 2 --num_workers 20
 python bdfg_distributed_stable_rand_k.py --k 1 --dataset mushrooms --max_it 10000 --tol 1e-7 --factor 4 --num_workers 20
@@ -76,6 +86,8 @@ python bdfg_distributed_stable_rand_k_dep.py --k 1 --dataset mushrooms --max_it 
 python bdfg_distributed_stable_rand_k_dep.py --k 1 --dataset mushrooms --max_it 10000 --tol 1e-7 --factor 32 --num_workers 20
 python bdfg_distributed_stable_rand_k_dep.py --k 1 --dataset mushrooms --max_it 10000 --tol 1e-7 --factor 64 --num_workers 20
 python bdfg_distributed_stable_rand_k_dep.py --k 1 --dataset mushrooms --max_it 10000 --tol 1e-7 --factor 128 --num_workers 20
+```
+
 
 
 ## Reproduce CIFAR10 Image Classification
